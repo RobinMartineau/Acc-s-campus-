@@ -203,7 +203,7 @@ curl -X POST "http://localhost:8000/badge/" \
      -H "Content-Type: application/json" \
      -d '{"uid": "9876543210", "actif": true, "id_utilisateur": 2}'
 
-#ajoute un badge inactif à Thomas:
+#Ajoute un badge inactif à Thomas:
 curl -X POST "http://localhost:8000/badge/" \
      -H "Content-Type: application/json" \
      -d '{"uid": "0918273645", "actif": false, "id_utilisateur": 3}'

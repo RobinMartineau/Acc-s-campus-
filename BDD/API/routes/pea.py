@@ -33,9 +33,6 @@ def verifierAcces(request: schemas.AccesRequest, db: Session = Depends(get_db)):
     if equipement.type == "BAE": 
         raise HTTPException(status_code = 400, detail = "Mauvaise requête: contacter un administrateur réseau")
 
-#Convertir l'UID de binaire (40 bits) en octets
-    uid_octet = int(uid, 2).to_bytes(5, "big")
-
 #Trouver l’utilisateur lié au badge
     badge = db.query(models.Badge).filter(models.Badge.uid == uid_octet).first()
 
