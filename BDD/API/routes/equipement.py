@@ -16,7 +16,7 @@ def get_db():
         db.close()
 
 #route POST pour ajouter une nouvelle entrée dans Equipement
-@router.post("/equipement/", response_model = schemas.EquipementResponse)
+@router.post("/equipement/", response_model = schemas.EquipementResponse, include_in_schema = False)
 def postEquipement(equipement: schemas.EquipementCreate, db: Session = Depends(get_db)):
     db_equipement = models.Equipement(**equipement.dict())
     db.add(db_equipement)

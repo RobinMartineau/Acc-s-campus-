@@ -18,49 +18,98 @@ def get_db():
         db.close()
 
 #Route POST pour faire l'absence d'un cours
-@router.post("/bae/appel/")
-def faireAbsence(request: schemas.AppelRequest, db: Session = Depends(get_db)):
+@router.post("/bae/appel/",
+    responses={
+        200: {"description": "Présence enregistrée avec succès"},
+        400: {"description": "Requête invalide"},
+        403: {
+            "description": "Accès refusé",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "Badge désactivé": {
+                            "summary": "Badge non valide",
+                            "value": {"detail": "Accès refusé : Veuillez rapporter le badge à un membre de la vie scolaire."},
+                        },
+                        "Mauvais équipement": {
+                            "summary": "Erreur d'équipement",
+                            "value": {"detail": "Mauvaise requête : contacter un administrateur réseau"},
+                        },
+                        "Salle incorrecte": {
+                            "summary": "Salle incorrecte",
+                            "value": {"detail": "Tu n'as pas cours dans cette salle"},
+                        }
+                    }
+                }
+            },
+        },
+        404: {
+            "description": "Donnée non trouvée",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "Équipement introuvable": {"summary": "Équipement inexistant", "value": {"detail": "Équipement introuvable"}},
+                        "Badge introuvable": {"summary": "Badge inconnu", "value": {"detail": "Badge inconnu ou non associé"}},
+                        "Utilisateur inconnu": {"summary": "Utilisateur inexistant", "value": {"detail": "Utilisateur inconnu"}},
+                    }
+                }
+            },
+        },
+    },
+)
+def faireAppel(request: schemas.AppelRequest, db: Session = Depends(get_db)):
     uid = request.uid
     adresse_mac = request.adresse_mac
 
     equipement = db.query(models.Equipement).filter(models.Equipement.adresse_mac == adresse_mac).first()
     heure_actuelle = datetime.datetime.now()
 
-#Vérifier que l'equipement existe
+    #Vérifier que l'equipement existe
     if not equipement:
         raise HTTPException(status_code = 404, detail = "Équipement introuvable")
  
-#Verifier que l'adresse mac correspond bien à une BAE
+    #Verifier que l'adresse mac correspond bien à une BAE
     if equipement.type == "PEA":
         raise HTTPException(status_code = 400, detail = "Mauvaise requête : contacter un administrateur réseau")
     
-#Trouver l’utilisateur lié au badge
+    #Trouver l’utilisateur lié au badge
     badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
 
     if not badge or not badge.id_utilisateur:
         raise HTTPException(status_code = 404, detail = "Badge inconnu ou non associé")
 
-#Vérifier si le badge est désactivé
+    #Vérifier si le badge est désactivé
     if not badge.actif:
         raise HTTPException(status_code = 403, detail = "Accès refusé : Veuillez rapporter le badge à un membre de la vie scolaire.")
 
-#Vérifier que l'utilisateur existe bel et bien
+    #Vérifier que l'utilisateur existe bel et bien
     utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == badge.id_utilisateur).first()
 
     if not utilisateur:
         raise HTTPException(status_code = 404, detail = "Utilisateur inconnu")
 
-#Trouver la salle correspondant à la PEA
+    #Trouver la salle correspondant à la PEA
     if not equipement or not equipement.id_salle:
         raise HTTPException(status_code = 404, detail = "Salle non trouvée")
 
     salle = db.query(models.Salle).filter(models.Salle.id == equipement.id_salle).first()
 
-#Vérifier que l'utilisateur est bien un élève
+    #Ajouter une entrée dans le Log peux importe si le badge est reconnu
+    log_entry = models.Log(
+        horaire = heure_actuelle,
+        id_equipement = equipement.id,
+        uid = uid
+    )
+    
+    db.add(log_entry)
+    db.commit()
+    db.refresh(log_entry) 
+
+    #Vérifier que l'utilisateur est bien un élève
     if utilisateur.role != "Eleve":
         raise HTTPException(status_code = 403, detail = "Borne d'Absence étudiant, vous n'êtes pas un étudiant")
     
-#Vérifier s'il a un cours en ce moment dans EDTUtilisateur   
+    #Vérifier s'il a un cours en ce moment dans EDTUtilisateur   
     cours = db.query(models.EDTUtilisateur).filter(
         models.EDTUtilisateur.id_utilisateur == utilisateur.id,
         models.EDTUtilisateur.id_salle == salle.id,
@@ -82,14 +131,14 @@ def faireAbsence(request: schemas.AppelRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code = 403, detail = f"Tu n'as pas cours dans cette salle, mais en {salle.numero}")
         
             
-#Mettre l'utilisateur présent à son cours
+    #Mettre l'utilisateur présent à son cours
     db.query(models.Absence).filter(
         models.Absence.id_utilisateur == utilisateur.id,
         models.Absence.id_edtutilisateur == cours.id
     ).update({"valide": False})
     db.commit()
         
-#Ajouter un retard si nécessaire
+    #Ajouter un retard si nécessaire
     limite = cours.horairedebut + timedelta(minutes = 5)
     retard = (heure_actuelle - cours.horairedebut).total_seconds() // 60
     
@@ -103,7 +152,7 @@ def faireAbsence(request: schemas.AppelRequest, db: Session = Depends(get_db)):
         db.add(retard_entry)
         db.commit()
 
-#Retourne les données nécessaires
+    #Retourne les données nécessaires
     classe = db.query(models.Classe).filter(models.Classe.id == utilisateur.id_classe).first()
     
     return {

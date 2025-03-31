@@ -17,7 +17,7 @@ def get_db():
         db.close()
 
 #Route GET pour récupérer l'entrée correspondant à l'id dans Utilisateur
-@router.get("/utilisateur/{id_utilisateur}", response_model = schemas.UtilisateurResponse)
+@router.get("/utilisateur/{id_utilisateur}", response_model = schemas.UtilisateurResponse, include_in_schema = False)
 def getUtilisateur(id_utilisateur: int, db: Session = Depends(get_db)):
     utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == id_utilisateur).first()
 
@@ -27,20 +27,20 @@ def getUtilisateur(id_utilisateur: int, db: Session = Depends(get_db)):
     return utilisateur
 
 #Route POST pour ajouter une entrées dans Utilisateur
-@router.post("/utilisateur/", response_model = schemas.UtilisateurResponse)
+@router.post("/utilisateur/", response_model = schemas.UtilisateurResponse, include_in_schema = False)
 def postUtilisateur(utilisateur: schemas.UtilisateurCreate, db: Session = Depends(get_db)):
     
     db_utilisateur = models.Utilisateur(**utilisateur.dict())
     
-#Générer l'identifiant unique en minuscule
+    #Générer l'identifiant unique en minuscule
     identifiant = f"{utilisateur.prenom.lower()}.{utilisateur.nom.lower()}"
 
-#Vérifier si l'identifiant existe déjà
+    #Vérifier si l'identifiant existe déjà
     existant = db.query(models.Utilisateur).filter(models.Utilisateur.identifiant == identifiant).first()
     if existant:
         raise HTTPException(status_code = 400, detail = "Identifiant déjà pris, veuillez modifier le prénom ou le nom")
 
-#Création de l'utilisateur
+    #Création de l'utilisateur
     db_utilisateur = models.Utilisateur(
         nom = utilisateur.nom,
         prenom = utilisateur.prenom,
@@ -50,7 +50,7 @@ def postUtilisateur(utilisateur: schemas.UtilisateurCreate, db: Session = Depend
         identifiant = identifiant
     )
     
-#Vérification qu'une classe est bien associer à l'utilisateur si c'est un élève
+    #Vérification qu'une classe est bien associer à l'utilisateur si c'est un élève
     if db_utilisateur.role == "Eleve":
         if not db_utilisateur.id_classe:
             raise HTTPException(status_code = 400, detail = "Classe non indiquée")
@@ -59,7 +59,7 @@ def postUtilisateur(utilisateur: schemas.UtilisateurCreate, db: Session = Depend
         if not classe:
             raise HTTPException(status_code = 400, detail = "Classe inexistante")
 
-#Génère un mot de passe aléatoire chiffré non existant dans la base
+    #Génère un mot de passe aléatoire chiffré non existant dans la base
     while True:
             mot_de_passe = password.generatePassword()
             if not db.query(models.Utilisateur).filter(models.Utilisateur.mot_de_passe == mot_de_passe).first():
@@ -67,7 +67,7 @@ def postUtilisateur(utilisateur: schemas.UtilisateurCreate, db: Session = Depend
                 
     db_utilisateur.mot_de_passe = mot_de_passe
 
-#Ajoute l'utilisateur à la base  
+    #Ajoute l'utilisateur à la base  
     db.add(db_utilisateur)
     db.commit()
     db.refresh(db_utilisateur)

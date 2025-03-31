@@ -16,8 +16,8 @@ def get_db():
     finally:
         db.close()
 
-#Route POST pour ajouter une entrées dans Badge_RFID
-@router.post("/badge/", response_model = schemas.BadgeResponse)
+#Route POST pour ajouter une entrées dans Badge
+@router.post("/badge/", response_model = schemas.BadgeResponse, include_in_schema = False)
 def postBadge(badge: schemas.BadgeCreate, db: Session = Depends(get_db)):
     date_actuelle = datetime.date.today()
 
