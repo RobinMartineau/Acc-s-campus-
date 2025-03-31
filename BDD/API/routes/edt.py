@@ -15,8 +15,8 @@ def get_db():
     finally:
         db.close()
 
-#Route POST pour ajouter une entrée dans Creneau_EDT_Utilisateur    
-@router.post("/creneau/utilisateur/", response_model = schemas.EDTUtilisateurResponse)
+#Route POST pour ajouter une entrée dans EDTUtilisateur    
+@router.post("/creneau/utilisateur/", response_model = schemas.EDTUtilisateurResponse, include_in_schema=False)
 def postEDTUtilisateur(creneau: schemas.EDTUtilisateurCreate, db: Session = Depends(get_db)):
     db_creneau = models.EDTUtilisateur(**creneau.dict())
     db.add(db_creneau)
@@ -28,7 +28,7 @@ def postEDTUtilisateur(creneau: schemas.EDTUtilisateurCreate, db: Session = Depe
     if not utilisateur:
         raise HTTPException(status_code = 404, detail = "Utilisateur non trouvé")
 
-#Création d'une entrée absence pour les élèves seulement
+    #Création d'une entrée absence pour les élèves seulement
     if utilisateur.role == "Eleve":
         absence_entry = models.Absence(
             id_edtutilisateur = db_creneau.id,

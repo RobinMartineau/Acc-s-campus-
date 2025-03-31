@@ -16,7 +16,7 @@ def get_db():
         db.close()
 
 #Route POST pour ajouter une entrées dans Autorisation
-@router.post("/autorisation/", response_model = schemas.AutorisationResponse)
+@router.post("/autorisation/", response_model = schemas.AutorisationResponse, include_in_schema=False)
 def postAutorisation(autorisation: schemas.AutorisationCreate, db: Session = Depends(get_db)):
     db_autorisation = models.Autorisation(**autorisation.dict())
     db.add(db_autorisation)
