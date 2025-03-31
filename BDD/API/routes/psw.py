@@ -19,10 +19,37 @@ def get_db():
 
 # Route POST pour la connexion
 @router.post("/psw/login/",
+    summary="Se connecter au site web.",
+    description="Cette route permet de se connecter au site web.",
     responses={
-        200: {"description": "Connexion réussie"},
-        404: {"description": "Utilisateur introuvable"},
-        401: {"description": "Mot de passe incorrect"},
+        200: {
+            "description": "Connexion réussie",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "success": True,
+                        "id_utilisateur": 1,
+                        "role": "Admin"
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Utilisateur introuvable",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Utilisateur introuvable"}
+                }
+            }
+        },
+        401: {
+            "description": "Mot de passe incorrect",
+            "content": {
+                "application/json": {
+                    "example": {"success": False}
+                }
+            }
+        }
     },
 )
 def login(request: schemas.LoginRequest, db: Session = Depends(get_db)):
@@ -46,9 +73,32 @@ def login(request: schemas.LoginRequest, db: Session = Depends(get_db)):
 
 #Route GET pour récupérer les absences vérifer d'un utilisateur
 @router.get("/psw/absence/{id_utilisateur}",
+    summary="Récupérer la liste des absences",
+    description="Cette route permet d'obtenir toutes les absences d'un utilisateur",
     responses={
-        200: {"description": "Absences récupérées avec succès"},
-        404: {"description": "Absences non trouvées"},
+        200: {
+            "description": "Absences récupérées avec succès",
+            "content": {
+                "application/json": {
+                    "example": [
+                        {
+                            "cours": "Mathématiques",
+                            "horaire": "2025-03-31T08:00:00",
+                            "justifiee": True,
+                            "motif": "Maladie"
+                        }
+                    ]
+                }
+            }
+        },
+        404: {
+            "description": "Absences non trouvées",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Absences non trouvées"}
+                }
+            }
+        }
     },
 )
 def getUAbsence(id_utilisateur: int, db: Session = Depends(get_db)):  
@@ -60,11 +110,11 @@ def getUAbsence(id_utilisateur: int, db: Session = Depends(get_db)):
         models.EDTUtilisateur.horairefin <= heure_actuelle
     ).all()
 
-    id_cours_passe = [cours.id for cours in cours_passe]
+    id_cours = [cours.id for cours in cours_passe]
     
     #Récupération des absences liées au cours
     absences = db.query(models.Absence).filter(
-        models.Absence.id_edtutilisateur.in_(id_cours_passe),
+        models.Absence.id_edtutilisateur.in_(id_cours),
         models.Absence.valide == True
     ).all()
 
@@ -78,11 +128,35 @@ def getUAbsence(id_utilisateur: int, db: Session = Depends(get_db)):
             "motif": absence.motif
         }for cours, absence in zip(cours_passe, absences)]
 
-#Route GET pour récupérer les retards vérifer d'un utilisateur
+#Route GET pour récupérer les retards d'un utilisateur
 @router.get("/psw/retard/{id_utilisateur}",
+    summary="Récupérer la liste des retards",
+    description="Cette route permet d'obtenir tous les retards d'un utilisateur",
     responses={
-        200: {"description": "Retards récupérés avec succès"},
-        404: {"description": "Retards non trouvés"},
+        200: {
+            "description": "Retards récupérés avec succès",
+            "content": {
+                "application/json": {
+                    "example": [
+                        {
+                            "cours": "Physique",
+                            "horaire": "2025-03-31T09:00:00",
+                            "duree": 15,
+                            "justifiee": False,
+                            "motif": "Transport en retard"
+                        }
+                    ]
+                }
+            }
+        },
+        404: {
+            "description": "Retards non trouvés",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Retards non trouvés"}
+                }
+            }
+        }
     },
 )
 def getURetard(id_utilisateur: int, db: Session = Depends(get_db)):
@@ -94,11 +168,11 @@ def getURetard(id_utilisateur: int, db: Session = Depends(get_db)):
         models.EDTUtilisateur.horairefin <= heure_actuelle
     ).all()
 
-    id_cours_passe = [cours.id for cours in cours_passe]
+    id_cours = [cours.id for cours in cours_passe]
     
     #Récupération des retards liées au cours    
     retards = db.query(models.Retard).filter(
-        models.Retard.id_edtutilisateur.in_(id_cours_passe),
+        models.Retard.id_edtutilisateur.in_(id_cours),
     ).all()
 
     if not retards:
@@ -114,17 +188,68 @@ def getURetard(id_utilisateur: int, db: Session = Depends(get_db)):
 
 #Route GET pour récupérer tout les élèves
 @router.get("/psw/eleve",
+    summary="Récupérer la liste des élèves",
+    description="Cette route permet d'obtenir les noms, prénoms et classes de tous les élèves",
     responses={
-        200: {"description": "Elèves récupérés avec succès"},
-        404: {"description": "Elèves non trouvés"},
+        200: {
+            "description": "Élèves récupérés avec succès",
+            "content": {
+                "application/json": {
+                    "example": [
+                        {
+                            "id": 1,
+                            "nom": "Dupont",
+                            "prenom": "Jean",
+                            "classe": "CIEL"
+                        }
+                    ]
+                }
+            }
+        },
+        404: {
+            "description": "Élèves non trouvés",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "Aucuns élèves": {
+                            "summary": "Élèves non trouvés",
+                            "value": {"detail": "Élèves non trouvés"},
+                        },
+                        "Aucunes classes": {
+                            "summary": "Classes non trouvées",
+                            "value": {"detail": "Classes non trouvées"},
+                        }
+                    }
+                }
+            }
+        }
     },
 )
-def getEleve(id_utilisateur: int, db: Session = Depends(get_db)):
+def getEleve(db: Session = Depends(get_db)):
     eleve = db.query(models.Utilisateur).filter(
         models.Utilisateur.role == "Eleve"
     ).all()
 
     if not eleve:
-        raise HTTPException(status_code = 404, detail = "Elèves non trouvés")        
+        raise HTTPException(status_code = 404, detail = "Élèves non trouvés")        
 
-    return eleve
+    id_classe = [utilisateur.id_classe for utilisateur in eleve]
+    
+    classe = db.query(models.Classe).filter(
+            models.Classe.id.in_(id_classe)
+        ).all()
+
+    if not eleve:
+        raise HTTPException(status_code = 404, detail = "Classes non trouvées")
+ 
+    classes_dict = {c.id: c.nom for c in classe}
+
+    return [
+        {
+            "id": utilisateur.id,
+            "nom": utilisateur.nom,
+            "prenom": utilisateur.prenom,
+            "classe": classes_dict.get(utilisateur.id_classe, "Inconnue")
+        }
+        for utilisateur in eleve
+    ]

@@ -18,9 +18,28 @@ def get_db():
 #Route GET pour récupérer tous les utilisateurs avec leur mot de passe en clair
 @router.get("/pgs/utilisateur/",
     response_model=list[schemas.RecupUtilisateur],
+    summary="Récupérer la liste des utilisateurs",
+    description="Cette route permet d'obtenir tous les utilisateurs enregistrés dans la base de données avec leur mot de passe en clair.",
     responses={
-        200: {"description": "Liste des utilisateurs retournée avec succès"},
-        404: {"description": "Aucun utilisateur trouvé"},
+        200: {
+            "description": "Liste des utilisateurs retournée avec succès",
+            "content": {
+                "application/json": {
+                    "example": [
+                        {"id": 1, "nom": "Dupont", "prenom": "Jean", "email": "jean.dupont@example.com", "mot_de_passe": "password123"},
+                        {"id": 2, "nom": "Doe", "prenom": "Jane", "email": "jane.doe@example.com", "mot_de_passe": "123456"}
+                    ]
+                }
+            }
+        },
+        404: {
+            "description": "Aucun utilisateur trouvé",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Aucun utilisateur"}
+                }
+            }
+        },
     },
 )
 def getUtilisateurs(db: Session = Depends(get_db)):
@@ -36,8 +55,24 @@ def getUtilisateurs(db: Session = Depends(get_db)):
 #Route PUT pour modifier un utilisateur
 @router.put("/pgs/modifier/utilisateur/{id_utilisateur}",
     response_model=schemas.UtilisateurResponse,
+    summary="Modifier un utilisateur",
+    description="Cette route permet de modifier les informations d'un utilisateur.",
     responses={
-        200: {"description": "Utilisateur modifié avec succès"},
+        200: {
+            "description": "Utilisateur modifié avec succès",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "nom": "Dupont",
+                        "prenom": "Jean",
+                        "email": "jean.dupont@example.com",
+                        "role": "Eleve",
+                        "id_classe": 2
+                    }
+                }
+            }
+        },
         400: {
             "description": "Requête invalide",
             "content": {
@@ -55,7 +90,14 @@ def getUtilisateurs(db: Session = Depends(get_db)):
                 }
             },
         },
-        404: {"description": "Utilisateur non trouvé"},
+        404: {
+            "description": "Utilisateur non trouvé",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Utilisateur non trouvé"}
+                }
+            }
+        },
     },
 )
 def modifierUtilisateur(request: schemas.ModifRequest, utilisateur_update: schemas.UtilisateurCreate, db: Session = Depends(get_db)):
@@ -89,8 +131,21 @@ def modifierUtilisateur(request: schemas.ModifRequest, utilisateur_update: schem
 
 #Route PUT pour associer un utilisateur à un badge
 @router.put("/pgs/associer/utilisateur/{id_utilisateur}/badge/{uid_badge}",
+    summary="Associer un badge à un utilisateur",
+    description="Cette route permet d'associer un badge à un utilisateur en fonction de leur ID respectif.",
     responses={
-        200: {"description": "Badge associé avec succès"},
+        200: {
+            "description": "Badge associé avec succès",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "uid": "123ABC456A",
+                        "id_utilisateur": 2
+                    }
+                }
+            }
+        },
         400: {
             "description": "Erreur de validation",
             "content": {

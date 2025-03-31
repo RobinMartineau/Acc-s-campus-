@@ -18,6 +18,8 @@ def get_db():
 
 #Route POST pour vérifier l'accès d'un utilisateur
 @router.post("/pea/acces/",
+    summary="Vérifier accès.",
+    description="Cette route permet d'autoriser ou non un utilisateur à rentrer dans une salle.",   
     responses={
         200: {
             "description": "Accès autorisé",

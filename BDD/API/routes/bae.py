@@ -19,6 +19,8 @@ def get_db():
 
 #Route POST pour faire l'absence d'un cours
 @router.post("/bae/appel/",
+    summary="Faire l'appel.",
+    description="Cette route permet d'enregistrer l'appel pour un utilisateur.",
     responses={
         200: {"description": "Présence enregistrée avec succès"},
         400: {"description": "Requête invalide"},
