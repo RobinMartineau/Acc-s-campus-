@@ -16,7 +16,7 @@ def get_db():
         db.close()
 
 #Route POST pour ajouter une entrées dans Salle
-@router.post("/salle/", response_model = schemas.SalleResponse)
+@router.post("/salle/", response_model = schemas.SalleResponse, include_in_schema=False)
 def postSalle(salle: schemas.SalleCreate, db: Session = Depends(get_db)):
     db_salle = models.Salle(**salle.dict())
     db.add(db_salle)

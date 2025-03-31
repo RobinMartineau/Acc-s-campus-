@@ -25,12 +25,24 @@ class Salle(BaseModel):
 class SalleCreate(Salle):
     pass
 
+class SalleResponse(Salle):
+    id: int
+
+    class Config:
+        from_attributes = True
+
 #Modèle de Classe
 class Classe(BaseModel):
     nom: str
 
 class ClasseCreate(Classe):
     pass
+
+class ClasseResponse(Classe):
+    id: int
+
+    class Config:
+        from_attributes = True
 
 #Modèle de Equipement
 class Equipement(BaseModel):
@@ -43,6 +55,12 @@ class Equipement(BaseModel):
 
 class EquipementCreate(Equipement):
     pass
+
+class EquipementResponse(Equipement):
+    id: int
+
+    class Config:
+        from_attributes = True
 
 #Modèle de Utilisateur
 class Utilisateur(BaseModel):
@@ -57,6 +75,13 @@ class Utilisateur(BaseModel):
 
 class UtilisateurCreate(Utilisateur):
     mot_de_passe: Optional[str] = None
+    
+class UtilisateurResponse(Utilisateur):
+    id: int
+    identifiant: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
 
 #Modèle de Badge
 class BadgeBase(BaseModel):
@@ -67,6 +92,43 @@ class BadgeBase(BaseModel):
 
 class BadgeCreate(BadgeBase):
     pass
+
+class BadgeResponse(BadgeBase):
+    class Config:
+        from_attributes = True
+        
+
+#Modèle de Log
+class Log(BaseModel):
+    horaire: Optional[datetime.datetime] = None
+    id_equipement: int
+    uid: str
+
+class LogCreate(Log):
+    pass
+
+class LogResponse(Log):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+#Modèle de EDTSalle
+class EDTSalle(BaseModel):
+    horairedebut: datetime.datetime
+    horairefin: datetime.datetime
+    cours: Optional[str] = None
+    id_utilisateur: Optional[int] = None
+    id_salle: int
+
+class EDTSalleCreate(EDTSalle):
+    pass
+
+class EDTSalleResponse(EDTSalle):
+    id: int
+
+    class Config:
+        from_attributes = True
 
 #Modèle de EDTUtilisateur
 class EDTUtilisateur(BaseModel):
@@ -80,6 +142,61 @@ class EDTUtilisateur(BaseModel):
 class EDTUtilisateurCreate(EDTUtilisateur):
     pass
 
+class EDTUtilisateurResponse(EDTUtilisateur):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+#Modèle de Absence
+class Absence(BaseModel):
+    motif: Optional[str] = None
+    justifiee: Optional[bool] = None
+    valide: Optional[bool] = None
+    id_utilisateur: int
+    id_edtutilisateur: int
+
+class AbsenceResponse(Absence):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+#Modèle de Retard
+class Retard(BaseModel):
+    duree: int
+    motif: Optional[str] = None
+    justifiee: Optional[bool] = None
+    id_utilisateur: int
+    id_edtutilisateur: int
+
+class RetardCreate(Retard):
+    pass
+
+class RetardResponse(Retard):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+#Modèle de EDTClasse
+class EDTClasse(BaseModel):
+    horairedebut: datetime.datetime
+    horairefin: datetime.datetime
+    cours: Optional[str] = None
+    id_utilisateur: Optional[int] = None
+    id_salle: int
+    id_classe: int
+
+class EDTClasseCreate(EDTClasse):
+    pass
+
+class EDTClasseResponse(EDTClasse):
+    id: int
+
+    class Config:
+        from_attributes = True
+
 #Modèle de Autorisation
 class Autorisation(BaseModel):
     autorisee: Optional[bool] = None
@@ -88,6 +205,29 @@ class Autorisation(BaseModel):
 
 class AutorisationCreate(Autorisation):
     pass
+
+class AutorisationResponse(Autorisation):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+#Modèle de Reservation
+class Reservation(BaseModel):
+    horairedebut: datetime.datetime
+    horairefin: datetime.datetime
+    id_utilisateur: int
+    id_salle: int
+    
+class ReservationCreate(Reservation):
+    pass
+
+class ReservationResponse(Reservation):
+    id: int
+    id_edtsalle: int
+    
+    class Config:
+        from_attributes = True
 
 #Modèle pour la PEA
 class AccesRequest(BaseModel):
@@ -113,15 +253,16 @@ class ModifRequest(BaseModel):
     date_de_naissance: Optional[datetime.date] = None
     id_classe: Optional[int] = None
     
-class AssoRequest(ModifRequest):
+class AssoRequest(BaseModel):
     uid: str
+    id_utilisateur: int
 
 class RecupUtilisateur(Utilisateur):
     id: int
     mot_de_passe: str
     identifiant: Optional[str] = None
     
-#Méthode renvoyer le mot de passe en clair
+    #Méthode renvoyer le mot de passe en clair
     @classmethod
     def from_orm(cls, obj):
         return cls(

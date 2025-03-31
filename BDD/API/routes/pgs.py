@@ -16,7 +16,32 @@ def get_db():
         db.close()
 
 #Route GET pour récupérer tous les utilisateurs avec leur mot de passe en clair
-@router.get("/pgs/utilisateur/", response_model = list[schemas.RecupUtilisateur])
+@router.get("/pgs/utilisateur/",
+    response_model=list[schemas.RecupUtilisateur],
+    summary="Récupérer la liste des utilisateurs",
+    description="Cette route permet d'obtenir tous les utilisateurs enregistrés dans la base de données avec leur mot de passe en clair.",
+    responses={
+        200: {
+            "description": "Liste des utilisateurs retournée avec succès",
+            "content": {
+                "application/json": {
+                    "example": [
+                        {"id": 1, "nom": "Dupont", "prenom": "Jean", "email": "jean.dupont@example.com", "mot_de_passe": "password123"},
+                        {"id": 2, "nom": "Doe", "prenom": "Jane", "email": "jane.doe@example.com", "mot_de_passe": "123456"}
+                    ]
+                }
+            }
+        },
+        404: {
+            "description": "Aucun utilisateur trouvé",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Aucun utilisateur"}
+                }
+            }
+        },
+    },
+)
 def getUtilisateurs(db: Session = Depends(get_db)):
     utilisateur = db.query(models.Utilisateur).all()
 
@@ -28,7 +53,53 @@ def getUtilisateurs(db: Session = Depends(get_db)):
     return utilisateur_clair
 
 #Route PUT pour modifier un utilisateur
-@router.put("/pgs/modifier/utilisateur/{id_utilisateur}", response_model = schemas.UtilisateurResponse)
+@router.put("/pgs/modifier/utilisateur/{id_utilisateur}",
+    response_model=schemas.UtilisateurResponse,
+    summary="Modifier un utilisateur",
+    description="Cette route permet de modifier les informations d'un utilisateur.",
+    responses={
+        200: {
+            "description": "Utilisateur modifié avec succès",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "nom": "Dupont",
+                        "prenom": "Jean",
+                        "email": "jean.dupont@example.com",
+                        "role": "Eleve",
+                        "id_classe": 2
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Requête invalide",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "Classe requise": {
+                            "summary": "Un élève doit être associé à une classe",
+                            "value": {"detail": "Un élève doit être associé à une classe"},
+                        },
+                        "Classe inexistante": {
+                            "summary": "Classe fournie introuvable",
+                            "value": {"detail": "Classe inexistante"},
+                        },
+                    }
+                }
+            },
+        },
+        404: {
+            "description": "Utilisateur non trouvé",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Utilisateur non trouvé"}
+                }
+            }
+        },
+    },
+)
 def modifierUtilisateur(request: schemas.ModifRequest, utilisateur_update: schemas.UtilisateurCreate, db: Session = Depends(get_db)):
     id_utilisateur = request.id_utilisateur
 
@@ -59,7 +130,54 @@ def modifierUtilisateur(request: schemas.ModifRequest, utilisateur_update: schem
     return utilisateur
 
 #Route PUT pour associer un utilisateur à un badge
-@router.put("/pgs/associer/utilisateur/{id_utilisateur}/badge/{uid_badge}")
+@router.put("/pgs/associer/utilisateur/{id_utilisateur}/badge/{uid_badge}",
+    summary="Associer un badge à un utilisateur",
+    description="Cette route permet d'associer un badge à un utilisateur en fonction de leur ID respectif.",
+    responses={
+        200: {
+            "description": "Badge associé avec succès",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "uid": "123ABC456A",
+                        "id_utilisateur": 2
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Erreur de validation",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "Badge déjà attribué": {
+                            "summary": "Ce badge est déjà utilisé",
+                            "value": {"detail": "Ce badge est déjà attribué à un utilisateur"},
+                        }
+                    }
+                }
+            },
+        },
+        404: {
+            "description": "Utilisateur ou badge non trouvé",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "Utilisateur introuvable": {
+                            "summary": "L'utilisateur spécifié n'existe pas",
+                            "value": {"detail": "Utilisateur non trouvé"},
+                        },
+                        "Badge introuvable": {
+                            "summary": "Le badge spécifié n'existe pas",
+                            "value": {"detail": "Badge non trouvé"},
+                        }
+                    }
+                }
+            },
+        },
+    },
+)
 def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
     uid = request.uid
     id_utilisateur = request.id_utilisateur

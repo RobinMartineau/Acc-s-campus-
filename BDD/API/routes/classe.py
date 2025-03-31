@@ -16,7 +16,7 @@ def get_db():
         db.close()
 
 #Route POST pour ajouter une entrées dans Classe
-@router.post("/classe/", response_model = schemas.ClasseResponse)
+@router.post("/classe/", response_model = schemas.ClasseResponse, include_in_schema=False)
 def postClasse(classe: schemas.ClasseCreate, db: Session = Depends(get_db)):
     db_classe = models.Classe(**classe.dict())
     db.add(db_classe)
