@@ -50,11 +50,16 @@ sudo ufw default deny incoming
 sudo ufw default deny outgoing
 
 //Autoriser les ports nécessaire
-sudo ufw allow 8000/tcp #FastAPI
-sudo ufw allow 3000/tcp #NPM
-sudo ufw allow 22/tcp #SSH
-sudo ufw allow 80/tcp #HTTP
-sudo ufw allow 443/tcp #HTTPS
+sudo ufw allow in 8000/tcp #FastAPI
+sudo ufw allow in 3000/tcp #NPM
+sudo ufw allow in 22/tcp #SSH
+sudo ufw allow out 53/tcp #DNS tcp
+sudo ufw allow out 53/udp #DNS udp
+sudo ufw allow out 80/tcp #HTTP
+sudo ufw allow out 443/tcp #HTTPS
+sudo ufw allow in on lo #Loopback
+sudo ufw allow out on lo #Loopback
+
 
 //Activer/Désactiver le parefeu
 sudo ufw enable

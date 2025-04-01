@@ -53,53 +53,7 @@ def getUtilisateurs(db: Session = Depends(get_db)):
     return utilisateur_clair
 
 #Route PUT pour modifier un utilisateur
-@router.put("/pgs/modifier/utilisateur/{id_utilisateur}",
-    response_model=schemas.UtilisateurResponse,
-    summary="Modifier un utilisateur",
-    description="Cette route permet de modifier les informations d'un utilisateur.",
-    responses={
-        200: {
-            "description": "Utilisateur modifié avec succès",
-            "content": {
-                "application/json": {
-                    "example": {
-                        "id": 1,
-                        "nom": "Dupont",
-                        "prenom": "Jean",
-                        "email": "jean.dupont@example.com",
-                        "role": "Eleve",
-                        "id_classe": 2
-                    }
-                }
-            }
-        },
-        400: {
-            "description": "Requête invalide",
-            "content": {
-                "application/json": {
-                    "examples": {
-                        "Classe requise": {
-                            "summary": "Un élève doit être associé à une classe",
-                            "value": {"detail": "Un élève doit être associé à une classe"},
-                        },
-                        "Classe inexistante": {
-                            "summary": "Classe fournie introuvable",
-                            "value": {"detail": "Classe inexistante"},
-                        },
-                    }
-                }
-            },
-        },
-        404: {
-            "description": "Utilisateur non trouvé",
-            "content": {
-                "application/json": {
-                    "example": {"detail": "Utilisateur non trouvé"}
-                }
-            }
-        },
-    },
-)
+@router.put("/pgs/modifier/utilisateur/{id_utilisateur}", response_model=schemas.UtilisateurResponse, include_in_schema = False)
 def modifierUtilisateur(request: schemas.ModifRequest, utilisateur_update: schemas.UtilisateurCreate, db: Session = Depends(get_db)):
     id_utilisateur = request.id_utilisateur
 
