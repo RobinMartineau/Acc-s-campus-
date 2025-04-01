@@ -257,6 +257,10 @@ class AssoRequest(BaseModel):
     uid: str
     id_utilisateur: int
 
+class ActiBadge(BaseModel):
+    uid: str
+    actif: bool
+
 class RecupUtilisateur(Utilisateur):
     id: int
     mot_de_passe: str

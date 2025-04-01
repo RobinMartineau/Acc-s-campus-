@@ -17,15 +17,53 @@ def get_db():
         db.close()
 
 #Route GET pour récupérer toutes les entrées dans Badge
-@router.get("/badge/", response_model = list[schemas.BadgeResponse], include_in_schema = False)
+@router.get("/badge/",
+    summary="Récupérer tous les badges",
+    description="Cette route permet d'obtenir la liste complète des badges enregistrés dans la base de données.",
+    responses={
+        200: {
+            "description": "Liste de tous les badges",
+            "content": {
+                "application/json": {
+                    "example": [
+                        {
+                            "uid": "A1B2C3F6",
+                            "actif": True,
+                            "creation": "2025-03-31",
+                            "id_utilisateur": 12
+                        },
+                        {
+                            "uid": "X7W6V5U4",
+                            "actif": False,
+                            "creation": "2025-03-28",
+                            "id_utilisateur": 8
+                        }
+                    ]
+                }
+            }
+        },
+        404: {
+            "description": "Aucun badge trouvé",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Aucun badge trouvé"}
+                }
+            }
+        }
+    }
+)
 def getBadges(db: Session = Depends(get_db)):
+    badge = db.query(models.Badge).all()
 
-    return db.query(models.Badge).all()
+    if not badge:
+        raise HTTPException(status_code = 404, detail = "Aucun badge trouvé")
+
+    return badge
         
 #Route GET pour récupérer l'entrée correspondant à  l'uid dans Badge
 @router.get("/badge/{uid}", response_model = schemas.BadgeResponse, include_in_schema = False)
-def getBadge(uid: int, db: Session = Depends(get_db)):
-    badge = db.query(models.Badge).filter(models.Badge.id == id_badge).first()
+def getBadge(uid: str, db: Session = Depends(get_db)):
+    badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
 
     if not badge:
         raise HTTPException(status_code = 404, detail = "Badge non trouvé")
@@ -91,8 +129,29 @@ def postBadge(badge: schemas.BadgeCreate, db: Session = Depends(get_db)):
     return db_badge
     
 #Route DELETE pour supprimer l'entrée correspondant à l'uid dans Badge
-@router.delete("/badge/{uid}", include_in_schema = False)
-def deleteBadge(uid: int, db: Session = Depends(get_db)):
+@router.delete("/badge/{uid}",
+    summary="Supprimer un badge",
+    description="Cette route permet de supprimer un badge de la base de données en fonction de son UID.",
+    responses={
+        200: {
+            "description": "Badge supprimé avec succès",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Badge supprimé"}
+                }
+            }
+        },
+        404: {
+            "description": "Badge introuvable",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Badge non trouvé"}
+                }
+            }
+        }
+    }
+)
+def deleteBadge(uid: str, db: Session = Depends(get_db)):
     badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
 
     if not badge:
