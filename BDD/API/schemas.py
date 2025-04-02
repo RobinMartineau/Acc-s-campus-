@@ -66,6 +66,7 @@ class EquipementResponse(Equipement):
 class Utilisateur(BaseModel):
     nom: str
     prenom: str
+    identifiant: str
     role: Optional[RoleEnum] = None
     date_de_naissance: Optional[datetime.date] = None
     id_classe: Optional[int] = None
@@ -273,6 +274,7 @@ class RecupUtilisateur(Utilisateur):
             id = obj.id,
             nom = obj.nom,
             prenom = obj.prenom,
+            identifiant = obj.identifiant,
             role = obj.role,
             date_de_naissance = obj.date_de_naissance,
             mot_de_passe = chiffrement.decryptPassword(obj.mot_de_passe),

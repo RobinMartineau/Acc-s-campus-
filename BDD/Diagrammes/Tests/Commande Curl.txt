@@ -306,4 +306,4 @@ curl -X PUT "http://localhost:8000/pgs/associer/utilisateur/{id_utilisateur}/bad
 #Activé/désactivé un badge
 curl -X PUT "http://localhost:8000/pgs/badge/" \
      -H "Content-Type: application/json" \
-     -d '{"uid": "01234567", "actif": true}'
+     -d '{"uid": "01234567", "actif": false}'

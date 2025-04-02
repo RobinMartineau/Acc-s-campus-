@@ -96,17 +96,6 @@ def faireAppel(request: schemas.AppelRequest, db: Session = Depends(get_db)):
 
     salle = db.query(models.Salle).filter(models.Salle.id == equipement.id_salle).first()
 
-    #Ajouter une entrée dans le Log peux importe si le badge est reconnu
-    log_entry = models.Log(
-        horaire = heure_actuelle,
-        id_equipement = equipement.id,
-        uid = uid
-    )
-    
-    db.add(log_entry)
-    db.commit()
-    db.refresh(log_entry) 
-
     #Vérifier que l'utilisateur est bien un élève
     if utilisateur.role != "Eleve":
         raise HTTPException(status_code = 403, detail = "Borne d'Absence étudiant, vous n'êtes pas un étudiant")

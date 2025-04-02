@@ -26,8 +26,8 @@ def get_db():
             "content": {
                 "application/json": {
                     "example": [
-                        {"id": 1, "mot_de_passe": "Tynego28", "nom": "Dupont", "prenom": "Jean", "role": "Eleve", "date_de_naissance": "2005-04-01"},
-                        {"id": 2, "mot_de_passe": "Zafuke64", "nom": "Doe", "prenom": "Jane", "role": "Prof", "date_de_naissance": "1991-01-11"}
+                        {"id": 1, "nom": "Dupont", "prenom": "Jean", "identifiant": "jean.dupont", "role": "Eleve", "date_de_naissance": "2005-04-01", "mot_de_passe": "Tynego28", "id_classe": "1"},
+                        {"id": 1, "nom": "Marie", "prenom": "Frank", "identifiant": "frank.marie", "role": "Prof", "date_de_naissance": "1976-05-11", "mot_de_passe": "Gezaqi71", "id_classe": "null"},
                     ]
                 }
             }
