@@ -26,8 +26,8 @@ def get_db():
             "content": {
                 "application/json": {
                     "example": [
-                        {"id": 1, "nom": "Dupont", "prenom": "Jean", "email": "jean.dupont@example.com", "mot_de_passe": "password123"},
-                        {"id": 2, "nom": "Doe", "prenom": "Jane", "email": "jane.doe@example.com", "mot_de_passe": "123456"}
+                        {"id": 1, "nom": "Dupont", "prenom": "Jean", "identifiant": "jean.dupont", "role": "Eleve", "date_de_naissance": "2005-04-01", "mot_de_passe": "Tynego28", "id_classe": "1"},
+                        {"id": 1, "nom": "Marie", "prenom": "Frank", "identifiant": "frank.marie", "role": "Prof", "date_de_naissance": "1976-05-11", "mot_de_passe": "Gezaqi71", "id_classe": "null"},
                     ]
                 }
             }
@@ -53,53 +53,7 @@ def getUtilisateurs(db: Session = Depends(get_db)):
     return utilisateur_clair
 
 #Route PUT pour modifier un utilisateur
-@router.put("/pgs/modifier/utilisateur/{id_utilisateur}",
-    response_model=schemas.UtilisateurResponse,
-    summary="Modifier un utilisateur",
-    description="Cette route permet de modifier les informations d'un utilisateur.",
-    responses={
-        200: {
-            "description": "Utilisateur modifié avec succès",
-            "content": {
-                "application/json": {
-                    "example": {
-                        "id": 1,
-                        "nom": "Dupont",
-                        "prenom": "Jean",
-                        "email": "jean.dupont@example.com",
-                        "role": "Eleve",
-                        "id_classe": 2
-                    }
-                }
-            }
-        },
-        400: {
-            "description": "Requête invalide",
-            "content": {
-                "application/json": {
-                    "examples": {
-                        "Classe requise": {
-                            "summary": "Un élève doit être associé à une classe",
-                            "value": {"detail": "Un élève doit être associé à une classe"},
-                        },
-                        "Classe inexistante": {
-                            "summary": "Classe fournie introuvable",
-                            "value": {"detail": "Classe inexistante"},
-                        },
-                    }
-                }
-            },
-        },
-        404: {
-            "description": "Utilisateur non trouvé",
-            "content": {
-                "application/json": {
-                    "example": {"detail": "Utilisateur non trouvé"}
-                }
-            }
-        },
-    },
-)
+@router.put("/pgs/modifier/utilisateur/{id_utilisateur}", response_model=schemas.UtilisateurResponse, include_in_schema = False)
 def modifierUtilisateur(request: schemas.ModifRequest, utilisateur_update: schemas.UtilisateurCreate, db: Session = Depends(get_db)):
     id_utilisateur = request.id_utilisateur
 
@@ -139,8 +93,7 @@ def modifierUtilisateur(request: schemas.ModifRequest, utilisateur_update: schem
             "content": {
                 "application/json": {
                     "example": {
-                        "id": 1,
-                        "uid": "123ABC456A",
+                        "uid": "123ABC45",
                         "id_utilisateur": 2
                     }
                 }
@@ -182,24 +135,97 @@ def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
     uid = request.uid
     id_utilisateur = request.id_utilisateur
 
-#Vérifier si l'utilisateur existe
+    #Vérifier si l'utilisateur existe
     utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == id_utilisateur).first()
 
     if not utilisateur:
         raise HTTPException(status_code = 404, detail = "Utilisateur non trouvé")
 
-#Vérifier si le badge existe
+    #Vérifier si le badge existe
     badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
 
     if not badge:
         raise HTTPException(status_code = 404, detail = "Badge non trouvé")
 
-#Vérifier si le badge est déjà attribué
+    #Vérifier si le badge est déjà attribué
     if badge.id_utilisateur:
         raise HTTPException(status_code = 400, detail = "Ce badge est déjà attribué à un utilisateur")
 
-#Associer le badge à l'utilisateur
+    #Associer le badge à l'utilisateur
     badge.id_utilisateur = utilisateur.id
+
+    db.commit()
+    db.refresh(badge)
+
+    return badge
+
+
+#Route PUT pour activer/désactiver un badge
+@router.put("/pgs/badge/",
+    summary="Activer ou désactiver un badge",
+    description=(
+        "Cette route permet d'activer ou de désactiver un badge en fonction de son UID. "
+        "Si le badge est déjà dans l'état demandé, une erreur 403 est retournée."
+    ),
+    responses={
+        200: {
+            "description": "Badge activé ou désactivé avec succès",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "uid": "123ABC45",
+                        "actif": True
+                    }
+                }
+            }
+        },
+        403: {
+            "description": "Le badge est déjà dans l'état demandé",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "Déjà activé": {
+                            "summary": "Le badge est déjà activé",
+                            "value": {"detail": "Badge déjà activé."}
+                        },
+                        "Déjà désactivé": {
+                            "summary": "Le badge est déjà désactivé",
+                            "value": {"detail": "Badge déjà désactivé."}
+                        }
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Badge non trouvé",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Badge non trouvé"}
+                }
+            }
+        },
+    },
+)
+def associerBadge(request: schemas.ActiBadge, db: Session = Depends(get_db)):
+    uid = request.uid
+
+    #Vérifier si le badge existe
+    badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
+
+    if not badge:
+        raise HTTPException(status_code = 404, detail = "Badge non trouvé")
+
+    #Vérifier si le badge est déjà...
+    if badge.actif == request.actif:
+        #...Activé
+        if request.actif == True:
+            raise HTTPException(status_code=403, detail="Badge déjà activé.")
+        #...Désactivé
+        else:
+            raise HTTPException(status_code=403, detail="Badge déjà désactivé.")
+
+    #Associer le badge à l'utilisateur
+    badge.actif = request.actif
 
     db.commit()
     db.refresh(badge)

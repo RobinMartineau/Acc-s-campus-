@@ -16,7 +16,7 @@ def get_db():
         db.close()
 
 #Route POST pour ajouter une entrée dans EDTUtilisateur    
-@router.post("/creneau/utilisateur/", response_model = schemas.EDTUtilisateurResponse, include_in_schema=False)
+@router.post("/creneau/utilisateur/", response_model = schemas.EDTUtilisateurResponse, include_in_schema = False)
 def postEDTUtilisateur(creneau: schemas.EDTUtilisateurCreate, db: Session = Depends(get_db)):
     db_creneau = models.EDTUtilisateur(**creneau.dict())
     db.add(db_creneau)

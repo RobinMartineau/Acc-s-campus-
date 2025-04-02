@@ -1,0 +1,153 @@
+CREATE TYPE role AS ENUM ('Invite', 'Personnel', 'Eleve', 'Prof', 'Admin');
+
+CREATE TYPE type AS ENUM ('BAE', 'PEA');
+
+CREATE TABLE Salle(
+   Id SMALLSERIAL,
+   Numero CHAR(4) NOT NULL,
+   Statut BOOLEAN NOT NULL,
+   PRIMARY KEY(Id),
+   UNIQUE(Numero)
+);
+
+CREATE TABLE Classe(
+   Id SMALLSERIAL,
+   Nom VARCHAR(20) NOT NULL,
+   PRIMARY KEY(id),
+   UNIQUE(Nom)
+);
+
+CREATE TABLE Equipement(
+   Id SMALLSERIAL,
+   Adresse_mac CHAR(17) NOT NULL,
+   Type type NOT NULL,
+   Id_Salle SMALLINT NOT NULL,
+   PRIMARY KEY(id),
+   UNIQUE(Adresse_mac),
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id)
+);
+
+CREATE TABLE Utilisateur(
+   Id SERIAL,
+   Identifiant VARCHAR(61),
+   Mot_de_passe VARCHAR(150),
+   Nom VARCHAR(30) NOT NULL,
+   Prenom VARCHAR(30) NOT NULL,
+   Role role NOT NULL,
+   Digicode CHAR(4),
+   Date_de_naissance DATE,
+   Id_Classe SMALLINT,
+   PRIMARY KEY(id),
+   UNIQUE(Mot_de_passe),
+   UNIQUE(Identifiant),
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id)
+);
+
+CREATE TABLE Badge(
+   UID CHAR(8),
+   Actif BOOLEAN NOT NULL,
+   Creation DATE NOT NULL,
+   Id_Utilisateur INT,
+   PRIMARY KEY(UID),
+   UNIQUE(Id_Utilisateur),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id)
+);
+
+CREATE TABLE Log(
+   Id SERIAL,
+   Horaire TIMESTAMP NOT NULL,
+   Id_Equipement INT NOT NULL,
+   UID CHAR(10) NOT NULL,
+   PRIMARY KEY(Id),
+   FOREIGN KEY(Id_Equipement) REFERENCES Equipement(Id),
+   FOREIGN KEY(UID) REFERENCES Badge(UID)
+);
+
+CREATE TABLE EDTSalle(
+   Id SERIAL,
+   HoraireDebut TIMESTAMP NOT NULL,
+   HoraireFin TIMESTAMP NOT NULL,
+   Cours VARCHAR(20),
+   Id_Utilisateur INT,
+   Id_Salle SMALLINT NOT NULL,
+   PRIMARY KEY(Id),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id)
+);
+
+CREATE TABLE EDTUtilisateur(
+   Id SERIAL,
+   HoraireDebut TIMESTAMP NOT NULL,
+   HoraireFin TIMESTAMP NOT NULL,
+   Cours VARCHAR(20),
+   Id_Salle SMALLINT NOT NULL,
+   Id_Classe SMALLINT,
+   Id_Utilisateur INT NOT NULL,
+   PRIMARY KEY(Id),
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id),
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id)
+);
+
+CREATE TABLE Absence(
+   Id SERIAL,
+   Valide BOOLEAN NOT NULL,
+   Motif VARCHAR(50),
+   Justifiee BOOLEAN NOT NULL,
+   Id_Utilisateur INT NOT NULL,
+   Id_EDTUtilisateur INT NOT NULL,
+   UNIQUE (Id_EDTUtilisateur),
+   PRIMARY KEY(Id),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
+   FOREIGN KEY(Id_EDTUtilisateur) REFERENCES EDTUtilisateur(Id)
+);
+
+CREATE TABLE Retard(
+   Id SERIAL,
+   Duree INT NOT NULL,
+   Motif VARCHAR(50),
+   Justifiee BOOLEAN NOT NULL,
+   Id_Utilisateur INT NOT NULL,
+   Id_EDTUtilisateur INT NOT NULL,
+   UNIQUE (Id_EDTUtilisateur),
+   PRIMARY KEY(Id),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
+   FOREIGN KEY(Id_EDTUtilisateur) REFERENCES EDTUtilisateur(Id)
+);
+
+CREATE TABLE EDTClasse(
+   Id SERIAL,
+   HoraireDebut TIMESTAMP NOT NULL,
+   HoraireFin TIMESTAMP NOT NULL,
+   Cours VARCHAR(20),
+   Id_Utilisateur INT,
+   Id_Salle SMALLINT NOT NULL,
+   Id_Classe SMALLINT NOT NULL,
+   PRIMARY KEY(Id),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id),
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id)
+);
+
+CREATE TABLE Autorisation(
+   Id SERIAL,
+   Autorisee BOOLEAN NOT NULL,
+   Id_Utilisateur INT NOT NULL,
+   Id_Salle SMALLINT NOT NULL,
+   PRIMARY KEY(Id),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id)
+);
+
+CREATE TABLE Reservation(
+   Id SERIAL,
+   HoraireDebut TIMESTAMP NOT NULL,
+   HoraireFin TIMESTAMP NOT NULL,
+   Id_edtsalle INT NOT NULL,
+   Id_Utilisateur INT NOT NULL,
+   Id_Salle SMALLINT NOT NULL,
+   PRIMARY KEY(Id),
+   FOREIGN KEY(Id_edtsalle) REFERENCES EDTSalle(Id),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id)
+);
