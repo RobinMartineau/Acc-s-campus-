@@ -16,10 +16,10 @@ class TypeEquipementEnum(str, Enum):
     BAE = "BAE"
     PEA = "PEA"
 
+
 #Modèle de Salle
 class Salle(BaseModel):
     numero: str
-    digicode: Optional[str] = None
     statut: Optional[bool] = None
 
 class SalleCreate(Salle):
@@ -30,6 +30,7 @@ class SalleResponse(Salle):
 
     class Config:
         from_attributes = True
+
 
 #Modèle de Classe
 class Classe(BaseModel):
@@ -43,6 +44,7 @@ class ClasseResponse(Classe):
 
     class Config:
         from_attributes = True
+
 
 #Modèle de Equipement
 class Equipement(BaseModel):
@@ -62,12 +64,13 @@ class EquipementResponse(Equipement):
     class Config:
         from_attributes = True
 
+
 #Modèle de Utilisateur
 class Utilisateur(BaseModel):
     nom: str
     prenom: str
-    identifiant: str
     role: Optional[RoleEnum] = None
+    digicode: Optional[str] = None
     date_de_naissance: Optional[datetime.date] = None
     id_classe: Optional[int] = None
 
@@ -83,6 +86,7 @@ class UtilisateurResponse(Utilisateur):
     
     class Config:
         from_attributes = True
+
 
 #Modèle de Badge
 class BadgeBase(BaseModel):
@@ -114,6 +118,7 @@ class LogResponse(Log):
     class Config:
         from_attributes = True
 
+
 #Modèle de EDTSalle
 class EDTSalle(BaseModel):
     horairedebut: datetime.datetime
@@ -130,6 +135,7 @@ class EDTSalleResponse(EDTSalle):
 
     class Config:
         from_attributes = True
+
 
 #Modèle de EDTUtilisateur
 class EDTUtilisateur(BaseModel):
@@ -149,6 +155,7 @@ class EDTUtilisateurResponse(EDTUtilisateur):
     class Config:
         from_attributes = True
 
+
 #Modèle de Absence
 class Absence(BaseModel):
     motif: Optional[str] = None
@@ -162,6 +169,7 @@ class AbsenceResponse(Absence):
 
     class Config:
         from_attributes = True
+
 
 #Modèle de Retard
 class Retard(BaseModel):
@@ -179,6 +187,7 @@ class RetardResponse(Retard):
 
     class Config:
         from_attributes = True
+
 
 #Modèle de EDTClasse
 class EDTClasse(BaseModel):
@@ -198,6 +207,7 @@ class EDTClasseResponse(EDTClasse):
     class Config:
         from_attributes = True
 
+
 #Modèle de Autorisation
 class Autorisation(BaseModel):
     autorisee: Optional[bool] = None
@@ -212,6 +222,7 @@ class AutorisationResponse(Autorisation):
 
     class Config:
         from_attributes = True
+
 
 #Modèle de Reservation
 class Reservation(BaseModel):
@@ -230,20 +241,24 @@ class ReservationResponse(Reservation):
     class Config:
         from_attributes = True
 
+
 #Modèle pour la PEA
 class AccesRequest(BaseModel):
     uid: str
     adresse_mac: str
+
 
 #Modèle pour la BAE
 class AppelRequest(BaseModel):
     uid: str
     adresse_mac: str
 
+
 #Modèle pour le PSW
 class LoginRequest(BaseModel):
     identifiant: str
     mot_de_passe: str
+
 
 #Modèle pour le PGS
 class ModifRequest(BaseModel):
@@ -276,6 +291,7 @@ class RecupUtilisateur(Utilisateur):
             prenom = obj.prenom,
             identifiant = obj.identifiant,
             role = obj.role,
+            digicode = obj.digicode,
             date_de_naissance = obj.date_de_naissance,
             mot_de_passe = chiffrement.decryptPassword(obj.mot_de_passe),
             id_classe = obj.id_classe
