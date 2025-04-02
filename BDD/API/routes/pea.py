@@ -112,10 +112,6 @@ def verifierAcces(request: schemas.AccesRequest, db: Session = Depends(get_db)):
 
     if not utilisateur:
         raise HTTPException(status_code = 404, detail = "Utilisateur inconnu")
-    
-    db.add(log_entry)
-    db.commit()
-    db.refresh(log_entry)
   
     #Vérifier si le badge est désactivé
     if not badge.actif:

@@ -28,7 +28,7 @@ RQT.6 /////TESTER LES REQUETES PGS\\\\\
 #Ajouter la salle C301:
 curl -X POST "http://localhost:8000/salle/" \
      -H "Content-Type: application/json" \
-     -d '{"numero": 2, "digicode": "1234"}'
+     -d '{"numero": "C301", "digicode": "1234"}'
 
 #Ajouter la classe CIEL:
 curl -X POST "http://localhost:8000/classe/" \
@@ -63,17 +63,17 @@ curl -X POST "http://localhost:8000/utilisateur/" \
 #Ajouter un badge actif à Lorick:
 curl -X POST "http://localhost:8000/badge/" \
      -H "Content-Type: application/json" \
-     -d '{"uid": "0123456789", "actif": true, "id_utilisateur": 1}'
+     -d '{"uid": "01234567", "actif": true, "id_utilisateur": 1}'
 
 #Ajouter un badge actif à M.Jumel:
 curl -X POST "http://localhost:8000/badge/" \
      -H "Content-Type: application/json" \
-     -d '{"uid": "9876543210", "actif": true, "id_utilisateur": 2}'
+     -d '{"uid": "98765432", "actif": true, "id_utilisateur": 2}'
 
 #Ajouter un badge inactif à un Admin:
 curl -X POST "http://localhost:8000/badge/" \
      -H "Content-Type: application/json" \
-     -d '{"uid": "0918273645", "actif": false, "id_utilisateur": 3}'
+     -d '{"uid": "09182736", "actif": false, "id_utilisateur": 3}'
 
 #Ajouter un log:
 curl -X POST "http://localhost:8000/log/" \
@@ -302,3 +302,8 @@ curl -X GET "http://localhost:8000/pgs/utilisateur/"
 curl -X PUT "http://localhost:8000/pgs/associer/utilisateur/{id_utilisateur}/badge/{uid}" \
      -H "Content-Type: application/json" \
      -d '{"id_utilisateur": 1, "uid": "0918273645"}'
+
+#Activé/désactivé un badge
+curl -X PUT "http://localhost:8000/pgs/badge/" \
+     -H "Content-Type: application/json" \
+     -d '{"uid": "01234567", "actif": false}'
