@@ -1,0 +1,24 @@
+SUR LE POSTE SERVER WEB (PSW) (ou alors sur un serveur dédier)
+
+//Installer isc-dhcp-server
+sudo apt update
+sudo apt install isc-dhcp-server -y
+
+//Configuration
+sudo micro /etc/default/isc-dhcp-server
+(dans le fichier)
+	INTERFACESv4="eno1"
+
+sudo micro /etc/dhcp/dhcpd.conf
+(dans le fichier)
+subnet 192.168.248.0 netmask 255.255.248.0 {
+    range 192.168.248.101 192.168.250.254;
+    option domain-name-servers 8.8.8.8, 8.8.4.4;
+    option domain-name "";
+    default-lease-time 86400; # 1 jour
+    max-lease-time 604800;    # 7 jours
+}
+
+//Activer le DHCP
+sudo systemctl restart isc-dhcp-server
+sudo systemctl enable isc-dhcp-server
