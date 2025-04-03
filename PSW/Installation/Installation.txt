@@ -41,6 +41,12 @@ pip install cryptography
 pip install python-dotenv
 
 
+###NODEJS###
+//Installation de nodejs npm
+su - 
+apt install nodejs npm -y
+
+
 ###PAREFEU###
 //Installation ufw
 sudo apt install ufw -y
@@ -109,3 +115,12 @@ sudo lsof -i :8000
 kill -9 <PID>
 
 
+###SITE###
+//Charger les fichiers nmp
+npm i
+
+//Affiche la version (next@15.1.7)
+npm list next
+
+//Lancer le site
+npm run dev
