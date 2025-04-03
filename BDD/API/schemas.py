@@ -280,7 +280,7 @@ class ActiBadge(BaseModel):
 class RecupUtilisateur(Utilisateur):
     id: int
     mot_de_passe: str
-    identifiant: Optional[str] = None
+    identifiant: str
     
     #Méthode renvoyer le mot de passe en clair
     @classmethod
