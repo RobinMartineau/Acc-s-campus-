@@ -69,6 +69,7 @@ sudo ufw disable
 //Vérifer le statut du parefeu
 sudo ufw status verbose
 
+
 ###DHCP###
 //Installer isc-dhcp-server
 sudo apt update
@@ -81,7 +82,7 @@ sudo micro /etc/default/isc-dhcp-server
 
 sudo micro /etc/dhcp/dhcpd.conf
 (dans le fichier)
-subnet 192.168.252.0 netmask 255.255.252.0 {
+subnet 192.168.252.0 netmask 255.255.248.0 {
     range 192.168.252.10 192.168.255.254;
     option domain-name-servers 8.8.8.8, 8.8.4.4;
     option domain-name "";
