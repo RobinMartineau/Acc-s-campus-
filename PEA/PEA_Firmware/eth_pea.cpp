@@ -36,7 +36,7 @@ void setupEthernet() {
   Serial.println(dns);
 }
 
-void sendHttpPost() {
+char sendHttpPost() {
   char macStr[18];  // Format "AA:BB:CC:DD:EE:FF"
   sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X",
           mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
@@ -59,7 +59,8 @@ void sendHttpPost() {
     client.println();  // Ligne vide pour terminer les en-têtes
     client.print(jsonBody);  // Envoi du corps de la requête
 
-    // Attente de la réponse du serveur (timeout de 5 secondes)
+
+    
     unsigned long startTime = millis();
     while (client.connected() && !client.available()) {
       if (millis() - startTime > 5000) {
@@ -73,6 +74,7 @@ void sendHttpPost() {
     while (client.available()) {
       char c = client.read();
       Serial.write(c);
+      serverResponse += c;
     }
 
     // Fermeture de la connexion
@@ -81,4 +83,15 @@ void sendHttpPost() {
   } else {
     Serial.println("Échec de la connexion au serveur.");
   }
+  return serverResponse; 
+ }
+
+
+void actionResponse(char serverResponse){
+  if(jsonPart.indexOf("\"autorise\":true") != -1) {
+    deverrouillerGache();
+  }
+  else{
+    Serial.println("Pas autorisé à rentrer !");
+    } 
 }
