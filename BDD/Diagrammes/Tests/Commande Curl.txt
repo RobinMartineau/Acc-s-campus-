@@ -231,7 +231,7 @@ curl -X POST "http://localhost:8000/creneau/utilisateur/" \
 #Cas 1: Accès autorisé (badge actif, autorisation)
 curl -X POST "http://localhost:8000/pea/acces/" \
      -H "Content-Type: application/json" \
-     -d '{"uid": "9876543210", "adresse_mac": "00:1B:2C:3D:4E:5F"}'
+     -d '{"uid": "98765432", "adresse_mac": "00:1B:2C:3D:4E:5F"}'
 
 #Cas 2: Accès autorisé (badge actif, cours)
 curl -X POST "http://localhost:8000/pea/acces/" \
