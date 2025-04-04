@@ -33,7 +33,9 @@ void D1Interrupt();
 void decodeWiegand(uint64_t data, int bitCount);
 void printRawWiegandBits();
 void setupEthernet();
-void sendHttpPost();
+char sendHttpPost();
+void actionReponse();
+void deverrouillerGache();
 
 
 #endif
