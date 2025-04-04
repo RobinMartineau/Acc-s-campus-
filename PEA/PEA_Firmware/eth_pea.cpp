@@ -36,12 +36,12 @@ void setupEthernet() {
   Serial.println(dns);
 }
 
-char sendHttpPost() {
+String sendHttpPost() {
   char macStr[18];  // Format "AA:BB:CC:DD:EE:FF"
   sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X",
           mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
   String jsonBody = String("{\"uid\":\"") + uid + "\",\"adresse_mac\":\"" + macStr + "\"}";
-  
+  String serverResponse;
   Serial.print("Corps JSON construit : ");
   Serial.println(jsonBody);
 
@@ -87,8 +87,8 @@ char sendHttpPost() {
  }
 
 
-void actionResponse(char serverResponse){
-  if(jsonPart.indexOf("\"autorise\":true") != -1) {
+void actionResponse(String serverResponse){
+  if(serverResponse.indexOf("\"autorise\":true") != -1) {
     deverrouillerGache();
   }
   else{
