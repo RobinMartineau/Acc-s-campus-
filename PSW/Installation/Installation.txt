@@ -124,3 +124,46 @@ npm list next
 
 //Lancer le site
 npm run dev
+
+
+###PM2###
+//Installation de pm2
+sudo npm install -g pm2
+
+//Ajout d'un fichier ecosystem.config.js
+micro ecosystem.config.js
+(dans le fichier)
+module.exports = {
+  apps: [
+    {
+      name: 'express-site',
+      script: 'npm',
+      args: 'run dev',
+      cwd: '/home/user/SITE/PSW-main',
+      watch: true,
+      env: {
+        NODE_ENV: 'development',
+      }
+    },
+    {
+      name: 'fastapi-app',
+      script: '/home/user/BDD/bin/python',
+      args: '-m uvicorn main:app --host 0.0.0.0 --port 8000 --reload',
+      cwd: '/home/user/Documents/API',
+      watch: true
+    }
+  ]
+};
+
+//Lancement de pm2
+pm2 start ecosystem.config.js
+
+//Après une modif dans le fichier
+pm2 stop all
+pm2 delete all
+pm2 start ecosystem.config.js
+pm2 save
+
+//Voir les logs
+pm2 logs express-site
+	 fastapi-app
