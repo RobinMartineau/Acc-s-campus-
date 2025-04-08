@@ -41,6 +41,12 @@ pip install cryptography
 pip install python-dotenv
 
 
+###NODEJS###
+//Installation de nodejs npm
+su - 
+apt install nodejs npm -y
+
+
 ###PAREFEU###
 //Installation ufw
 sudo apt install ufw -y
@@ -69,6 +75,7 @@ sudo ufw disable
 //Vérifer le statut du parefeu
 sudo ufw status verbose
 
+
 ###DHCP###
 //Installer isc-dhcp-server
 sudo apt update
@@ -81,8 +88,8 @@ sudo micro /etc/default/isc-dhcp-server
 
 sudo micro /etc/dhcp/dhcpd.conf
 (dans le fichier)
-subnet 192.168.252.0 netmask 255.255.252.0 {
-    range 192.168.252.10 192.168.255.254;
+subnet 192.168.248.0 netmask 255.255.248.0 {
+    range 192.168.248.101 192.168.250.254;
     option domain-name-servers 8.8.8.8, 8.8.4.4;
     option domain-name "";
     default-lease-time 86400; # 1 jour
@@ -108,3 +115,55 @@ sudo lsof -i :8000
 kill -9 <PID>
 
 
+###SITE###
+//Charger les fichiers nmp
+npm i
+
+//Affiche la version (next@15.1.7)
+npm list next
+
+//Lancer le site
+npm run dev
+
+
+###PM2###
+//Installation de pm2
+sudo npm install -g pm2
+
+//Ajout d'un fichier ecosystem.config.js
+micro ecosystem.config.js
+(dans le fichier)
+module.exports = {
+  apps: [
+    {
+      name: 'express-site',
+      script: 'npm',
+      args: 'run dev',
+      cwd: '/home/user/SITE/PSW-main',
+      watch: true,
+      env: {
+        NODE_ENV: 'development',
+      }
+    },
+    {
+      name: 'fastapi-app',
+      script: '/home/user/BDD/bin/python',
+      args: '-m uvicorn main:app --host 0.0.0.0 --port 8000 --reload',
+      cwd: '/home/user/Documents/API',
+      watch: true
+    }
+  ]
+};
+
+//Lancement de pm2
+pm2 start ecosystem.config.js
+
+//Après une modif dans le fichier
+pm2 stop all
+pm2 delete all
+pm2 start ecosystem.config.js
+pm2 save
+
+//Voir les logs
+pm2 logs express-site
+	 fastapi-app

@@ -1,0 +1,27 @@
+SUR LE POSTE SERVER WEB (PSW)
+//Installation ufw
+sudo apt install ufw -y
+
+//Bloquer toutes les entrées et sorties
+sudo ufw default deny incoming
+sudo ufw default deny outgoing
+
+//Autoriser les ports nécessaire
+sudo ufw allow in 8000/tcp #FastAPI
+sudo ufw allow in 3000/tcp #NPM
+sudo ufw allow in 22/tcp #SSH
+sudo ufw allow out 53/tcp #DNS tcp
+sudo ufw allow out 53/udp #DNS udp
+sudo ufw allow out 80/tcp #HTTP
+sudo ufw allow out 443/tcp #HTTPS
+sudo ufw allow in on lo #Loopback
+sudo ufw allow out on lo #Loopback
+sudo ufw allow in 5432/tcp #pgAdmin
+sudo ufw allow out 5432/tcp #pgAdmin
+
+//Activer/Désactiver le parefeu
+sudo ufw enable
+sudo ufw disable
+
+//Vérifer le statut du parefeu
+sudo ufw status verbose
