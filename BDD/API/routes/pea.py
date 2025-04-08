@@ -101,13 +101,13 @@ def verifierAcces(request: schemas.AccesRequest, db: Session = Depends(get_db)):
     if equipement.type == "BAE": 
         raise HTTPException(status_code = 400, detail = "Mauvaise requête: contacter un administrateur réseau")
 
-    #Trouver l’utilisateur lié au badge
+    #Trouver le badge
     badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
 
     if not badge or not badge.id_utilisateur:
         raise HTTPException(status_code = 404, detail = "Badge inconnu ou non associé")
 
-    #Vérifier que l'utilisateur existe bel et bien
+    #Trouver l'utilisateur
     utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == badge.id_utilisateur).first()
 
     if not utilisateur:
@@ -123,13 +123,13 @@ def verifierAcces(request: schemas.AccesRequest, db: Session = Depends(get_db)):
 
     id_salle = equipement.id_salle
 
-    #Vérifier si une autorisation existe pour cet utilisateur dans cette salle
+    #Récupérer une autorisation (si elle existe) pour cet utilisateur dans cette salle
     autorisation = db.query(models.Autorisation).filter(
         models.Autorisation.id_utilisateur == utilisateur.id,
         models.Autorisation.id_salle == id_salle
     ).first()
 
-    #Vérifier s'il a un cours en ce moment dans EDTUtilisateur
+    #Récupérer le cours (s'il en a un) de l'utilisateur en ce moment dans EDTUtilisateur
     cours = db.query(models.EDTUtilisateur).filter(
         models.EDTUtilisateur.id_utilisateur == utilisateur.id,
         models.EDTUtilisateur.id_salle == id_salle,

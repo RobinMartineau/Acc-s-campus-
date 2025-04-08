@@ -33,11 +33,7 @@ void setup() {
 }
 
 void loop() {
-  /*Exemple d'utilisation de l'ethernet
-  setupEthernet();
-  sendHttpPost();
-  */
-  
-
-  
+    deverrouillerGache();
+    delay(5000);
+ 
 }

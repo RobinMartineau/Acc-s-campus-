@@ -34,7 +34,7 @@ CREATE TABLE Utilisateur(
    Nom VARCHAR(30) NOT NULL,
    Prenom VARCHAR(30) NOT NULL,
    Role role NOT NULL,
-   Digicode CHAR(4),
+   Digicode CHAR(6),
    Date_de_naissance DATE,
    Id_Classe SMALLINT,
    PRIMARY KEY(id),
