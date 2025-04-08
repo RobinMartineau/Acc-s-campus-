@@ -141,6 +141,10 @@ def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
     if not utilisateur:
         raise HTTPException(status_code = 404, detail = "Utilisateur non trouvé")
 
+    #Vérifier si aucune classe n'est rentré pour un non élève
+    if utilisateur_update.id_classe and utilisateur_update.role != "Eleve":
+        raise HTTPException(status_code=400, detail="Seuls les élèves peuvent être associés à une classe")
+
     #Vérifier si le badge existe
     badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
 
@@ -150,6 +154,12 @@ def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
     #Vérifier si le badge est déjà attribué
     if badge.id_utilisateur:
         raise HTTPException(status_code = 400, detail = "Ce badge est déjà attribué à un utilisateur")
+
+    #Vérifier si l'utilisateur a déjà un badge
+    badge_exist = db.query(models.Badge).filter(models.Badge.id_utilisateur == id_utilisateur).first()
+    
+    if badge_exist:
+        raise HTTPException(status_code=400, detail="Cet utilisateur possède déjà un badge")
 
     #Associer le badge à l'utilisateur
     badge.id_utilisateur = utilisateur.id
@@ -206,7 +216,7 @@ def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
         },
     },
 )
-def associerBadge(request: schemas.ActiBadge, db: Session = Depends(get_db)):
+def activerBadge(request: schemas.ActiBadge, db: Session = Depends(get_db)):
     uid = request.uid
 
     #Vérifier si le badge existe
