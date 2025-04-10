@@ -17,7 +17,7 @@ def get_db():
     finally:
         db.close()
 
-#Route POST pour la connexion
+# Route POST pour la connexion
 @router.post("/psw/login/",
     summary="Se connecter au site web.",
     description="Cette route permet de se connecter au site web.",
@@ -50,8 +50,8 @@ def get_db():
                 }
             }
         }
-    },
-)
+    }, 
+tags=["PSW"])
 def login(request: schemas.LoginRequest, db: Session = Depends(get_db)):
     utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.identifiant == request.identifiant).first()
 
@@ -99,8 +99,8 @@ def login(request: schemas.LoginRequest, db: Session = Depends(get_db)):
                 }
             }
         }
-    },
-)
+    }, 
+tags=["PSW"])
 def getUAbsence(id_utilisateur: int, db: Session = Depends(get_db)):  
     heure_actuelle = datetime.datetime.now()
     
@@ -157,8 +157,8 @@ def getUAbsence(id_utilisateur: int, db: Session = Depends(get_db)):
                 }
             }
         }
-    },
-)
+    }, 
+tags=["PSW"])
 def getURetard(id_utilisateur: int, db: Session = Depends(get_db)):
     heure_actuelle = datetime.datetime.now()
 
@@ -223,8 +223,8 @@ def getURetard(id_utilisateur: int, db: Session = Depends(get_db)):
                 }
             }
         }
-    },
-)
+    }, 
+tags=["PSW"])
 def getEleve(db: Session = Depends(get_db)):
     eleve = db.query(models.Utilisateur).filter(
         models.Utilisateur.role == "Eleve"

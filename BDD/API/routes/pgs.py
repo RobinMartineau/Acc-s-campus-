@@ -40,8 +40,8 @@ def get_db():
                 }
             }
         },
-    },
-)
+    }, 
+tags=["PGS"])
 def getUtilisateurs(db: Session = Depends(get_db)):
     utilisateur = db.query(models.Utilisateur).all()
 
@@ -129,8 +129,8 @@ def modifierUtilisateur(request: schemas.ModifRequest, utilisateur_update: schem
                 }
             },
         },
-    },
-)
+    }, 
+tags=["PGS"])
 def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
     uid = request.uid
     id_utilisateur = request.id_utilisateur
@@ -212,8 +212,8 @@ def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
                 }
             },
         },
-    },
-)
+    }, 
+tags=["PGS"])
 def dissocierBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
     uid = request.uid
     id_utilisateur = request.id_utilisateur
@@ -286,8 +286,8 @@ def dissocierBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
                 }
             }
         },
-    },
-)
+    }, 
+tags=["PGS"])
 def activerBadge(request: schemas.ActiBadge, db: Session = Depends(get_db)):
     uid = request.uid
 

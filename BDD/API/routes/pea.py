@@ -84,8 +84,8 @@ def get_db():
                 }
             }
         }
-    }
-)
+    }, 
+tags=["PEA"])
 def verifierAcces(request: schemas.AccesRequest, db: Session = Depends(get_db)):
     uid = request.uid
     adresse_mac = request.adresse_mac
