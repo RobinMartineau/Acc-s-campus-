@@ -40,8 +40,8 @@ def get_db():
                 }
             }
         },
-    },
-)
+    }, 
+tags=["PGS"])
 def getUtilisateurs(db: Session = Depends(get_db)):
     utilisateur = db.query(models.Utilisateur).all()
 
@@ -129,8 +129,8 @@ def modifierUtilisateur(request: schemas.ModifRequest, utilisateur_update: schem
                 }
             },
         },
-    },
-)
+    }, 
+tags=["PGS"])
 def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
     uid = request.uid
     id_utilisateur = request.id_utilisateur
@@ -140,10 +140,6 @@ def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
 
     if not utilisateur:
         raise HTTPException(status_code = 404, detail = "Utilisateur non trouvé")
-
-    #Vérifier si aucune classe n'est rentré pour un non élève
-    if utilisateur_update.id_classe and utilisateur_update.role != "Eleve":
-        raise HTTPException(status_code=400, detail="Seuls les élèves peuvent être associés à une classe")
 
     #Vérifier si le badge existe
     badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
@@ -169,6 +165,82 @@ def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
 
     return badge
 
+@router.put("/pgs/dissocier/utilisateur/{id_utilisateur}/badge/{uid_badge}",
+    summary="Dissocier un badge d'un utilisateur",
+    description="Cette route permet de dissocier un badge actuellement associé à un utilisateur, en utilisant leur ID et l'UID du badge.",
+    responses={
+        200: {
+            "description": "Badge dissocié avec succès",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "uid": "123ABC45",
+                        "actif": True,
+                        "creation": "2025-03-31",
+                        "id_utilisateur": None
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Erreur de validation",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "Badge non attribué": {
+                            "summary": "Le badge n'est pas actuellement associé",
+                            "value": {"detail": "Ce badge n'est pas déjà attribué à un utilisateur"},
+                        }
+                    }
+                }
+            },
+        },
+        404: {
+            "description": "Utilisateur ou badge non trouvé",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "Utilisateur introuvable": {
+                            "summary": "L'utilisateur spécifié n'existe pas",
+                            "value": {"detail": "Utilisateur non trouvé"},
+                        },
+                        "Badge introuvable": {
+                            "summary": "Le badge spécifié n'existe pas",
+                            "value": {"detail": "Badge non trouvé"},
+                        }
+                    }
+                }
+            },
+        },
+    }, 
+tags=["PGS"])
+def dissocierBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
+    uid = request.uid
+    id_utilisateur = request.id_utilisateur
+
+    #Vérifier si l'utilisateur existe
+    utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == id_utilisateur).first()
+
+    if not utilisateur:
+        raise HTTPException(status_code = 404, detail = "Utilisateur non trouvé")
+
+    #Vérifier si le badge existe
+    badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
+
+    if not badge:
+        raise HTTPException(status_code = 404, detail = "Badge non trouvé")
+
+    #Vérifier si le badge est déjà attribué
+    if not badge.id_utilisateur:
+        raise HTTPException(status_code = 400, detail = "Ce badge n'est pas déjà attribué à un utilisateur")
+
+    #Dissocier le badge
+    badge.id_utilisateur = None
+
+    db.commit()
+    db.refresh(badge)
+
+    return badge
 
 #Route PUT pour activer/désactiver un badge
 @router.put("/pgs/badge/",
@@ -214,8 +286,8 @@ def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
                 }
             }
         },
-    },
-)
+    }, 
+tags=["PGS"])
 def activerBadge(request: schemas.ActiBadge, db: Session = Depends(get_db)):
     uid = request.uid
 

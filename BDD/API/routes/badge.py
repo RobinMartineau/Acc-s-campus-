@@ -50,8 +50,8 @@ def get_db():
                 }
             }
         }
-    }
-)
+    }, 
+tags=["PGS"])
 def getBadges(db: Session = Depends(get_db)):
     badge = db.query(models.Badge).all()
 
@@ -80,7 +80,7 @@ def getBadge(uid: str, db: Session = Depends(get_db)):
             "content": {
                 "application/json": {
                     "example": {
-                        "uid": "A1B2C3D4F6",
+                        "uid": "A1B2C3D4",
                         "actif": True,
                         "creation": "2025-03-31"
                     }
@@ -104,8 +104,8 @@ def getBadge(uid: str, db: Session = Depends(get_db)):
                 }
             }
         }
-    }
-)
+    }, 
+tags=["PGS"])
 def postBadge(badge: schemas.BadgeCreate, db: Session = Depends(get_db)):
     date_actuelle = datetime.date.today()
 
@@ -149,8 +149,8 @@ def postBadge(badge: schemas.BadgeCreate, db: Session = Depends(get_db)):
                 }
             }
         }
-    }
-)
+    }, 
+tags=["PGS"])
 def deleteBadge(uid: str, db: Session = Depends(get_db)):
     badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
 
