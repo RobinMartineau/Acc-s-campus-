@@ -2,7 +2,29 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import utilisateur, autorisation, badge, salle, classe, equipement, edt, pea, bae, pgs, psw
 
-app = FastAPI()
+app = FastAPI(
+    title="API ACCES CAMPUS",
+    description="API utiliser pour répondre aux requêtes envoyés par le PGS, le PSW, les BAEs et PEAs.",
+    version="1.0.0",
+    openapi_tags=[
+        {
+            "name": "BAE",
+            "description": "Tout ce qui concerne les BAEs."
+        },
+        {
+            "name": "PEA",
+            "description": "Tout ce qui concerne les PEAs."
+        },
+        {
+            "name": "PGS",
+            "description": "Tout ce qui concerne le PGS."
+        },
+        {
+            "name": "PSW",
+            "description": "Tout ce qui concerne le PSW."
+        },
+    ]
+)
 
 #Ajout des routes
 app.include_router(utilisateur.router)

@@ -57,8 +57,8 @@ def get_db():
                 }
             },
         },
-    },
-)
+    }, 
+tags=["BAE"])
 def faireAppel(request: schemas.AppelRequest, db: Session = Depends(get_db)):
     uid = request.uid
     adresse_mac = request.adresse_mac
