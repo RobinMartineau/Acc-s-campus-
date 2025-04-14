@@ -17,7 +17,7 @@ def get_db():
     finally:
         db.close()
 
-# Route POST pour la connexion
+#Route POST pour la connexion
 @router.post("/psw/login/",
     summary="Se connecter au site web.",
     description="Cette route permet de se connecter au site web.",
