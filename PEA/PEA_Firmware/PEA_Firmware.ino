@@ -47,7 +47,9 @@ void setup() {
 }
 
 void loop() {
-    deverrouillerGache();
-    delay(5000);
+    delay(1000);
+    Serial.println("Mot de passe :");
+    String pwd = keypad.password();
+    Serial.println(pwd);
  
 }

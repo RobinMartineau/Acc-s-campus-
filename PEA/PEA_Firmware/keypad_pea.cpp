@@ -63,3 +63,14 @@ int Keypad4x4::readColumns() {
   }
   return -1;
 }
+
+String Keypad4x4::password() {
+  String passwordKeys = "";
+  while(passwordKeys.length() < 6){
+    char k = getKey();
+    if(k){
+      passwordKeys += k;
+    }
+  }
+  return passwordKeys;
+}

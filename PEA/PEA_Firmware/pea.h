@@ -52,19 +52,21 @@ public:
             const char* keymap,
             byte numRows = 4,
             byte numCols = 4);
-
+            
   // À appeler dans setup()
   void begin();
 
   // Retourne 0 si pas de touche, sinon le caractère pressé
   char getKey();
 
+  String password();
+
 private:
   const byte* _rowPins;
   const byte* _colPins;
   const char* _keymap;
   byte _numRows, _numCols;
-
+  
   void setRowOutput(byte row);
   void setAllColumnsInputPullup();
   int readColumns();
