@@ -57,24 +57,24 @@ def getUtilisateurs(db: Session = Depends(get_db)):
 def modifierUtilisateur(request: schemas.ModifRequest, utilisateur_update: schemas.UtilisateurCreate, db: Session = Depends(get_db)):
     id_utilisateur = request.id_utilisateur
 
-#Vérifier si l'utilisateur existe
+    #Vérifier si l'utilisateur existe
     utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == id_utilisateur).first()
 
     if not utilisateur:
         raise HTTPException(status_code = 404, detail = "Utilisateur non trouvé")
 
-#Vérifier si le rôle change pour "Élève"
+    #Vérifier si le rôle change pour "Élève"
     if utilisateur_update.role == "Eleve":
         if not utilisateur_update.id_classe:
             raise HTTPException(status_code = 400, detail = "Un élève doit être associé à une classe")
 
-#Vérifier que la classe existe
+        #Vérifier que la classe existe
         classe = db.query(models.Classe).filter(models.Classe.id == utilisateur_update.id_classe).first()
 
         if not classe:
             raise HTTPException(status_code = 400, detail = "Classe inexistante")
 
-#Mettre à jour l'utilisateur
+    #Mettre à jour l'utilisateur
     for key, value in utilisateur_update.dict(exclude_unset = True).items():
         setattr(utilisateur, key, value)
 
