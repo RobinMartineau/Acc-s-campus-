@@ -9,7 +9,7 @@
 
 extern byte mac[];
 extern IPAddress ip;
-extern IPAddress serverIp;
+extern IPAddress serverIP;
 extern unsigned int serverPort;
 extern char* uid; 
 extern EthernetClient client;
@@ -33,9 +33,41 @@ void D1Interrupt();
 void decodeWiegand(uint64_t data, int bitCount);
 void printRawWiegandBits();
 void setupEthernet();
-char sendHttpPost();
-void actionReponse();
+String sendHttpPost();
+void actionReponse(String serverResponse);
 void deverrouillerGache();
 
 
 #endif
+
+#ifndef KEYPAD4X4_H
+#define KEYPAD4X4_H
+
+#include <Arduino.h>
+
+class Keypad4x4 {
+public:
+  Keypad4x4(const byte* rowPins,
+            const byte* colPins,
+            const char* keymap,
+            byte numRows = 4,
+            byte numCols = 4);
+
+  // À appeler dans setup()
+  void begin();
+
+  // Retourne 0 si pas de touche, sinon le caractère pressé
+  char getKey();
+
+private:
+  const byte* _rowPins;
+  const byte* _colPins;
+  const char* _keymap;
+  byte _numRows, _numCols;
+
+  void setRowOutput(byte row);
+  void setAllColumnsInputPullup();
+  int readColumns();
+};
+
+#endif // KEYPAD4X4_H
