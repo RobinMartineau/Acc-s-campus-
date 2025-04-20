@@ -44,7 +44,7 @@ class MockSalle:
         self.id = id
         self.numero = numero
 
-#T1 - MAC inconnue
+#T2.1 - MAC inconnue
 def test_appel_equipement_introuvable():
     db = MagicMock()
     db.query().filter().first.return_value = None
@@ -55,7 +55,7 @@ def test_appel_equipement_introuvable():
     assert exc.value.status_code == 404
     assert "Équipement introuvable" in exc.value.detail
 
-#T2 - Type PEA
+#T2.2 - Type PEA
 def test_appel_type_pea_refuse():
     db = MagicMock()
     db.query().filter().first.side_effect = [MockEquipement("00:11", "PEA")]
@@ -66,7 +66,7 @@ def test_appel_type_pea_refuse():
     assert exc.value.status_code == 400
     assert "Mauvaise requête" in exc.value.detail
 
-#T3 - Badge inconnu
+#T2.3 - Badge inconnu
 def test_appel_badge_inconnu():
     db = MagicMock()
     db.query().filter().first.side_effect = [
@@ -79,7 +79,7 @@ def test_appel_badge_inconnu():
         faireAppel(req, db)
     assert exc.value.status_code == 404
 
-#T4 - Badge non associé à un utilisateur
+#T2.4 - Badge non associé à un utilisateur
 def test_appel_badge_non_associe():
     db = MagicMock()
     db.query().filter().first.side_effect = [
@@ -92,7 +92,7 @@ def test_appel_badge_non_associe():
         faireAppel(req, db)
     assert exc.value.status_code == 404
 
-#T5 - Utilisateur inexistant
+#T2.5 - Utilisateur inexistant
 def test_appel_utilisateur_inexistant():
     db = MagicMock()
     db.query().filter().first.side_effect = [
@@ -106,7 +106,7 @@ def test_appel_utilisateur_inexistant():
         faireAppel(req, db)
     assert exc.value.status_code == 404
 
-#T6 - Badge désactivé
+#T2.6 - Badge désactivé
 def test_appel_badge_desactive():
     db = MagicMock()
     db.query().filter().first.side_effect = [
@@ -120,7 +120,7 @@ def test_appel_badge_desactive():
         faireAppel(req, db)
     assert exc.value.status_code == 403
 
-#T7 - Équipement sans salle
+#T2.7 - Équipement sans salle
 def test_appel_equipement_sans_salle():
     db = MagicMock()
     db.query().filter().first.side_effect = [
@@ -134,7 +134,7 @@ def test_appel_equipement_sans_salle():
         faireAppel(req, db)
     assert exc.value.status_code == 404
 
-#T8 - L'utilisateur n'est pas un élève
+#T2.8 - L'utilisateur n'est pas un élève
 def test_appel_utilisateur_pas_eleve():
     db = MagicMock()
     db.query().filter().first.side_effect = [
@@ -149,7 +149,7 @@ def test_appel_utilisateur_pas_eleve():
         faireAppel(req, db)
     assert exc.value.status_code == 403
 
-#T9 - Aucun cours en ce moment
+#T2.9 - Aucun cours en ce moment
 def test_appel_aucun_cours():
     db = MagicMock()
     db.query().filter().first.side_effect = [
@@ -164,7 +164,7 @@ def test_appel_aucun_cours():
         faireAppel(req, db)
     assert exc.value.status_code == 403
 
-#T10 - Cours trouvé mais dans une autre salle
+#T2.10 - Cours trouvé mais dans une autre salle
 def test_appel_cours_dans_autre_salle():
     db = MagicMock()
     db.query().filter().first.side_effect = [
@@ -180,7 +180,7 @@ def test_appel_cours_dans_autre_salle():
         faireAppel(req, db)
     assert exc.value.status_code == 403
 
-#T11 - Appel réussi AVEC retard
+#T2.11 - Appel réussi AVEC retard
 def test_appel_succes_avec_retard():
     db = MagicMock()
 
@@ -207,7 +207,7 @@ def test_appel_succes_avec_retard():
     assert response["prenom"] == utilisateur.prenom
     assert response["classe"] == "CIEL"
 
-#T12 - Appel réussi SANS retard
+#T2.12 - Appel réussi SANS retard
 def test_appel_succes_sans_retard():
     db = MagicMock()
 
