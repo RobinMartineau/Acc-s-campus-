@@ -46,7 +46,7 @@ def get_db():
             "description": "Mot de passe incorrect",
             "content": {
                 "application/json": {
-                    "example": {"success": False}
+                    "example": {"detail": "Mot de passe incorrect"}
                 }
             }
         }
@@ -63,7 +63,7 @@ def login(request: schemas.LoginRequest, db: Session = Depends(get_db)):
     mot_de_passe = chiffrement.decryptPassword(utilisateur.mot_de_passe)
 
     if mot_de_passe != request.mot_de_passe:
-        raise {"success": False}
+        raise HTTPException(status_code = 401, detail = "Mot de passe incorrect")
         
     return {
             "success": True,
@@ -239,7 +239,7 @@ def getEleve(db: Session = Depends(get_db)):
             models.Classe.id.in_(id_classe)
         ).all()
 
-    if not eleve:
+    if not classe:
         raise HTTPException(status_code = 404, detail = "Classes non trouvées")
  
     classes_dict = {c.id: c.nom for c in classe}
