@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from enum import Enum
 import datetime
@@ -28,8 +28,7 @@ class SalleCreate(Salle):
 class SalleResponse(Salle):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 #Modèle de Classe
@@ -42,9 +41,8 @@ class ClasseCreate(Classe):
 class ClasseResponse(Classe):
     id: int
 
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
+    
 
 #Modèle de Equipement
 class Equipement(BaseModel):
@@ -52,8 +50,7 @@ class Equipement(BaseModel):
     type: TypeEquipementEnum
     id_salle: int
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 class EquipementCreate(Equipement):
     pass
@@ -61,8 +58,7 @@ class EquipementCreate(Equipement):
 class EquipementResponse(Equipement):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 #Modèle de Utilisateur
@@ -74,8 +70,7 @@ class Utilisateur(BaseModel):
     date_de_naissance: Optional[datetime.date] = None
     id_classe: Optional[int] = None
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 class UtilisateurCreate(Utilisateur):
     mot_de_passe: Optional[str] = None
@@ -84,8 +79,7 @@ class UtilisateurResponse(Utilisateur):
     id: int
     identifiant: Optional[str] = None
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 #Modèle de Badge
@@ -99,8 +93,7 @@ class BadgeCreate(BadgeBase):
     pass
 
 class BadgeResponse(BadgeBase):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
         
 
 #Modèle de Log
@@ -115,8 +108,7 @@ class LogCreate(Log):
 class LogResponse(Log):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 #Modèle de EDTSalle
@@ -133,8 +125,7 @@ class EDTSalleCreate(EDTSalle):
 class EDTSalleResponse(EDTSalle):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 #Modèle de EDTUtilisateur
@@ -151,9 +142,8 @@ class EDTUtilisateurCreate(EDTUtilisateur):
 
 class EDTUtilisateurResponse(EDTUtilisateur):
     id: int
-
-    class Config:
-        from_attributes = True
+    
+    model_config = ConfigDict(from_attributes=True)
 
 
 #Modèle de Absence
@@ -167,8 +157,7 @@ class Absence(BaseModel):
 class AbsenceResponse(Absence):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 #Modèle de Retard
@@ -185,8 +174,7 @@ class RetardCreate(Retard):
 class RetardResponse(Retard):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 #Modèle de EDTClasse
@@ -204,8 +192,7 @@ class EDTClasseCreate(EDTClasse):
 class EDTClasseResponse(EDTClasse):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 #Modèle de Autorisation
@@ -220,8 +207,7 @@ class AutorisationCreate(Autorisation):
 class AutorisationResponse(Autorisation):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 #Modèle de Reservation
@@ -238,8 +224,7 @@ class ReservationResponse(Reservation):
     id: int
     id_edtsalle: int
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 #Modèle pour la PEA
@@ -280,7 +265,7 @@ class ActiBadge(BaseModel):
 class RecupUtilisateur(Utilisateur):
     id: int
     mot_de_passe: str
-    identifiant: str
+    identifiant: Optional[str] = None
     
     #Méthode renvoyer le mot de passe en clair
     @classmethod
