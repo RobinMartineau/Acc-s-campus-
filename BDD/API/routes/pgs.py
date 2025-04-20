@@ -57,24 +57,24 @@ def getUtilisateurs(db: Session = Depends(get_db)):
 def modifierUtilisateur(request: schemas.ModifRequest, utilisateur_update: schemas.UtilisateurCreate, db: Session = Depends(get_db)):
     id_utilisateur = request.id_utilisateur
 
-#Vérifier si l'utilisateur existe
+    #Vérifier si l'utilisateur existe
     utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == id_utilisateur).first()
 
     if not utilisateur:
         raise HTTPException(status_code = 404, detail = "Utilisateur non trouvé")
 
-#Vérifier si le rôle change pour "Élève"
+    #Vérifier si le rôle change pour "Élève"
     if utilisateur_update.role == "Eleve":
         if not utilisateur_update.id_classe:
             raise HTTPException(status_code = 400, detail = "Un élève doit être associé à une classe")
 
-#Vérifier que la classe existe
+    #Vérifier que la classe existe
         classe = db.query(models.Classe).filter(models.Classe.id == utilisateur_update.id_classe).first()
 
         if not classe:
             raise HTTPException(status_code = 400, detail = "Classe inexistante")
 
-#Mettre à jour l'utilisateur
+    #Mettre à jour l'utilisateur
     for key, value in utilisateur_update.dict(exclude_unset = True).items():
         setattr(utilisateur, key, value)
 
@@ -165,6 +165,7 @@ def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
 
     return badge
 
+#Route PUT pour dissocier un utilisateur d'un badge
 @router.put("/pgs/dissocier/utilisateur/{id_utilisateur}/badge/{uid_badge}",
     summary="Dissocier un badge d'un utilisateur",
     description="Cette route permet de dissocier un badge actuellement associé à un utilisateur, en utilisant leur ID et l'UID du badge.",
@@ -190,6 +191,10 @@ def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
                         "Badge non attribué": {
                             "summary": "Le badge n'est pas actuellement associé",
                             "value": {"detail": "Ce badge n'est pas déjà attribué à un utilisateur"},
+                        },
+                        "Badge non lié à l'utilisateur": {
+                            "summary": "Le badge est lié à un autre utilisateur",
+                            "value": {"detail": "Ce badge est attribué à un autre utilisateur"},
                         }
                     }
                 }
@@ -212,29 +217,32 @@ def associerBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
                 }
             },
         },
-    }, 
-tags=["PGS"])
+    },
+    tags=["PGS"]
+)
 def dissocierBadge(request: schemas.AssoRequest, db: Session = Depends(get_db)):
     uid = request.uid
     id_utilisateur = request.id_utilisateur
 
-    #Vérifier si l'utilisateur existe
+    # Vérifier si l'utilisateur existe
     utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == id_utilisateur).first()
-
     if not utilisateur:
-        raise HTTPException(status_code = 404, detail = "Utilisateur non trouvé")
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
 
-    #Vérifier si le badge existe
+    # Vérifier si le badge existe
     badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
-
     if not badge:
-        raise HTTPException(status_code = 404, detail = "Badge non trouvé")
+        raise HTTPException(status_code=404, detail="Badge non trouvé")
 
-    #Vérifier si le badge est déjà attribué
+    # Vérifier si le badge est attribué
     if not badge.id_utilisateur:
-        raise HTTPException(status_code = 400, detail = "Ce badge n'est pas déjà attribué à un utilisateur")
+        raise HTTPException(status_code=400, detail="Ce badge n'est pas déjà attribué à un utilisateur")
 
-    #Dissocier le badge
+    # Vérifier si le badge est bien attribué à cet utilisateur
+    if badge.id_utilisateur != id_utilisateur:
+        raise HTTPException(status_code=400, detail="Ce badge est attribué à un autre utilisateur")
+
+    # Dissocier le badge
     badge.id_utilisateur = None
 
     db.commit()
