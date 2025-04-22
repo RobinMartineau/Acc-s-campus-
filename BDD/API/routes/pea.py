@@ -16,10 +16,10 @@ def get_db():
     finally:
         db.close()
 
-#Route POST pour vérifier l'accès d'un utilisateur via Badge
+#Route POST pour vérifier l'accès d'un utilisateur via badge
 @router.post("/pea/acces/badge",
-    summary="Vérifier accès.",
-    description="Cette route permet d'autoriser ou non un utilisateur à rentrer dans une salle.",
+    summary="Vérifier accès via Badge.",
+    description="Cette route permet d'autoriser ou non un utilisateur à rentrer dans une salle via badge.",
     responses={
         200: {
             "description": "Accès autorisé",
@@ -86,7 +86,7 @@ def get_db():
         }
     }, 
 tags=["PEA"])
-def verifierAccesBadge(request: schemas.AccesRequest, db: Session = Depends(get_db)):
+def verifierAccesBadge(request: schemas.AccesRequestB, db: Session = Depends(get_db)):
     uid = request.uid
     adresse_mac = request.adresse_mac
 
@@ -165,11 +165,11 @@ def verifierAccesBadge(request: schemas.AccesRequest, db: Session = Depends(get_
         "autorisee": est_autorise
     }
 
-
-#Route POST pour vérifier l'accès d'un utilisateur via Digicode
+#Route POST pour vérifier l'accès d'un utilisateur via digicode
 @router.post("/pea/acces/digicode",
-    summary="Vérifier accès.",
-    description="Cette route permet d'autoriser ou non un utilisateur à rentrer dans une salle.",
+    summary="Vérifier accès via digicode.",
+    description="Cette route permet de vérifier si un utilisateur, identifié par un digicode, est autorisé à entrer dans une salle contrôlée par une PEA. "
+                "L'utilisateur doit avoir un badge actif associé, et soit être autorisé explicitement via une autorisation, soit avoir un cours en cours dans la salle.",
     responses={
         200: {
             "description": "Accès autorisé",
@@ -193,13 +193,13 @@ def verifierAccesBadge(request: schemas.AccesRequest, db: Session = Depends(get_
             }
         },
         403: {
-            "description": "Accès refusé (Badge désactivé ou utilisateur non autorisé)",
+            "description": "Accès refusé (badge désactivé ou accès non autorisé)",
             "content": {
                 "application/json": {
                     "examples": {
                         "Badge désactivé": {
-                            "summary": "Le badge n'est pas actif",
-                            "value": {"detail": "Accès refusé : Veuillez rapporter le badge à un membre de la vie scolaire."}
+                            "summary": "Le badge associé est désactivé",
+                            "value": {"detail": "Accès refusé : Badge désactivé."}
                         },
                         "Autorisation refusée": {
                             "summary": "L'utilisateur n'est pas autorisé à entrer",
@@ -210,7 +210,7 @@ def verifierAccesBadge(request: schemas.AccesRequest, db: Session = Depends(get_
             }
         },
         404: {
-            "description": "Ressource introuvable (Équipement, Badge, Utilisateur ou Salle)",
+            "description": "Ressource introuvable (Équipement, utilisateur, badge ou salle)",
             "content": {
                 "application/json": {
                     "examples": {
@@ -218,13 +218,13 @@ def verifierAccesBadge(request: schemas.AccesRequest, db: Session = Depends(get_
                             "summary": "Adresse MAC inconnue",
                             "value": {"detail": "Équipement introuvable"}
                         },
-                        "Badge inconnu": {
-                            "summary": "UID du badge non enregistré",
-                            "value": {"detail": "Badge inconnu ou non associé"}
-                        },
-                        "Utilisateur introuvable": {
-                            "summary": "L'utilisateur associé au badge n'existe pas",
+                        "Utilisateur inconnu": {
+                            "summary": "Le digicode ne correspond à aucun utilisateur",
                             "value": {"detail": "Utilisateur inconnu"}
+                        },
+                        "Badge non associé": {
+                            "summary": "L'utilisateur n'a pas de badge associé",
+                            "value": {"detail": "Aucun badge associé"}
                         },
                         "Salle introuvable": {
                             "summary": "La salle liée à l'équipement n'existe pas",
@@ -234,10 +234,10 @@ def verifierAccesBadge(request: schemas.AccesRequest, db: Session = Depends(get_
                 }
             }
         }
-    }, 
+    },
 tags=["PEA"])
-def verifierAcces(request: schemas.AccesRequest, db: Session = Depends(get_db)):
-    uid = request.uid
+def verifierAccesDigicode(request: schemas.AccesRequestD, db: Session = Depends(get_db)):
+    digicode = request.digicode
     adresse_mac = request.adresse_mac
 
     equipement = db.query(models.Equipement).filter(models.Equipement.adresse_mac == adresse_mac).first()
@@ -251,23 +251,23 @@ def verifierAcces(request: schemas.AccesRequest, db: Session = Depends(get_db)):
     if equipement.type == "BAE": 
         raise HTTPException(status_code = 400, detail = "Mauvaise requête: contacter un administrateur réseau")
 
-    #Trouver l’utilisateur lié au badge
-    badge = db.query(models.Badge).filter(models.Badge.uid == uid).first()
-
-    if not badge or not badge.id_utilisateur:
-        raise HTTPException(status_code = 404, detail = "Badge inconnu ou non associé")
-
-    #Vérifier que l'utilisateur existe bel et bien
-    utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == badge.id_utilisateur).first()
+    #Trouver l’utilisateur lié au digicode
+    utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.digicode == digicode).first()
 
     if not utilisateur:
         raise HTTPException(status_code = 404, detail = "Utilisateur inconnu")
 
+    #Trouver le badge lié à l'utilisateur
+    badge = db.query(models.Badge).filter(models.Badge.id_utilisateur == utilisateur.id).first()
+
+    if not badge or not badge.id_utilisateur:
+        raise HTTPException(status_code = 404, detail = "Aucun badge associé")
+
     #Ajouter une entrée dans Log
     log_entry = models.Log(
-        horaire=heure_actuelle,
-        id_equipement=equipement.id,
-        uid=uid
+        horaire = heure_actuelle,
+        id_equipement = equipement.id,
+        uid = badge.uid
     )
     
     db.add(log_entry)
@@ -276,7 +276,7 @@ def verifierAcces(request: schemas.AccesRequest, db: Session = Depends(get_db)):
   
     #Vérifier si le badge est désactivé
     if not badge.actif:
-        raise HTTPException(status_code = 403, detail = "Accès refusé : Veuillez rapporter le badge à un membre de la vie scolaire.")
+        raise HTTPException(status_code = 403, detail = "Accès refusé : Badge désactivé.")
 
     #Trouver la salle correspondant à la PEA
     if not equipement or not equipement.id_salle:

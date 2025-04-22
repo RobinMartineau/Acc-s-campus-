@@ -228,11 +228,14 @@ class ReservationResponse(Reservation):
 
 
 #Modèle pour la PEA
-class AccesRequest(BaseModel):
+class AccesRequestB(BaseModel):
     uid: str
     adresse_mac: str
 
-
+class AccesRequestD(BaseModel):
+    digicode: str
+    adresse_mac: str
+    
 #Modèle pour la BAE
 class AppelRequest(BaseModel):
     uid: str

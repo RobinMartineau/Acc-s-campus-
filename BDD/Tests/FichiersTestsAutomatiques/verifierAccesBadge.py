@@ -1,7 +1,7 @@
 import pytest
 from fastapi import HTTPException
 from unittest.mock import MagicMock
-from schemas import AccesRequest
+from schemas import AccesRequestB
 from routes.pea import verifierAccesBadge
 from dotenv import load_dotenv
 
@@ -38,7 +38,7 @@ class MockEDTUtilisateur:
 def test_equipement_introuvable():
     db = MagicMock()
     db.query().filter().first.return_value = None
-    req = AccesRequest(uid="123", adresse_mac="00:11:22:33:44")
+    req = AccesRequestB(uid="123", adresse_mac="00:11:22:33:44")
     
     with pytest.raises(HTTPException) as exc:
         verifierAccesBadge(req, db)
@@ -49,7 +49,7 @@ def test_equipement_introuvable():
 def test_equipement_bae():
     db = MagicMock()
     db.query().filter().first.side_effect = [MockEquipement("00:11", "BAE")]
-    req = AccesRequest(uid="123", adresse_mac="00:11")
+    req = AccesRequestB(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
         verifierAccesBadge(req, db)
@@ -62,7 +62,7 @@ def test_badge_inconnu():
         MockEquipement("00:11", "PEA", 1),
         None
     ]
-    req = AccesRequest(uid="123", adresse_mac="00:11")
+    req = AccesRequestB(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
         verifierAccesBadge(req, db)
@@ -76,7 +76,7 @@ def test_badge_non_associe_a_utilisateur():
         MockEquipement("00:11", "PEA", 1),
         MockBadge("123", id_utilisateur=None)
     ]
-    req = AccesRequest(uid="123", adresse_mac="00:11")
+    req = AccesRequestB(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
         verifierAccesBadge(req, db)
@@ -91,7 +91,7 @@ def test_utilisateur_inconnu():
         MockBadge("123", 1),
         None
     ]
-    req = AccesRequest(uid="123", adresse_mac="00:11")
+    req = AccesRequestB(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
         verifierAccesBadge(req, db)
@@ -105,7 +105,7 @@ def test_badge_desactive():
         MockBadge("123", 1, actif=False),
         MockUtilisateur(1)
     ]
-    req = AccesRequest(uid="123", adresse_mac="00:11")
+    req = AccesRequestB(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
         verifierAccesBadge(req, db)
@@ -120,7 +120,7 @@ def test_salle_introuvable():
         MockBadge("123", 1),
         MockUtilisateur(1)
     ]
-    req = AccesRequest(uid="123", adresse_mac="00:11")
+    req = AccesRequestB(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
         verifierAccesBadge(req, db)
@@ -136,7 +136,7 @@ def test_acces_refuse_aucune_autorisation_et_cours():
         None,
         None
     ]
-    req = AccesRequest(uid="123", adresse_mac="00:11")
+    req = AccesRequestB(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
         verifierAccesBadge(req, db)
@@ -152,7 +152,7 @@ def test_autorisation_refusee():
         MockAutorisation(False),
         None
     ]
-    req = AccesRequest(uid="123", adresse_mac="00:11")
+    req = AccesRequestB(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
         verifierAccesBadge(req, db)
@@ -169,7 +169,7 @@ def test_acces_autorise_par_autorisation():
         MockAutorisation(True),
         None
     ]
-    req = AccesRequest(uid="123", adresse_mac="00:11")
+    req = AccesRequestB(uid="123", adresse_mac="00:11")
 
     result = verifierAccesBadge(req, db)
     assert result["nom"] == "Jean"
@@ -187,7 +187,7 @@ def test_acces_autorise_par_edt():
         None,
         MockEDTUtilisateur()
     ]
-    req = AccesRequest(uid="123", adresse_mac="00:11")
+    req = AccesRequestB(uid="123", adresse_mac="00:11")
 
     result = verifierAccesBadge(req, db)
     assert result["nom"] == "Jean"
