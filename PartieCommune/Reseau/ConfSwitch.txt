@@ -1,0 +1,61 @@
+Host name: Switch1
+domain-name: campus.local
+username: admin | secret: BTS2425
+secret: BTS2425
+
+//Activer auth local vty
+enable
+conf t
+line vty 0 15
+login local
+transport input ssh
+exit
+
+//Génère une cle RSA
+crypto key generate rsa
+-->1024
+
+//Activer SSH
+ip ssh version 2
+
+//Se connecter en SSH (depuis un PC)
+ssh -oHostKeyAlgorithms=+ssh-rsa -oKexAlgorithms=+diffie-hellman-group1-sha1 -oCiphers=+aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc -oMACs=+hmac-sha1,hmac-sha1-96,hmac-md5,hmac-md5-96 admin@192.168.248.2
+
+//Ajout vlan
+vlan 10
+name Publique
+exit
+vlan 20
+name Badge
+exit
+vlan 30
+name Administration
+exit
+
+//Configuration vlan 10
+interface vlan 10
+no shutdown
+exit
+
+//Configuration vlan 20
+interface vlan 20
+no shutdown
+exit
+
+//Configuration vlan 30
+interface vlan 30
+ip address 192.168.248.2 255.255.248.0
+no shutdown
+exit
+
+//Repartition des interfaces
+vlan 10: fa0/13 --> fa0/24
+vlan 20: fa0/5 --> fa0/12
+vlan 30: fa0/1 --> fa0/4
+
+//Exemple configuration interface fa0/1
+interface fa0/1
+switchport mode access
+switchport access vlan 30
+no shutdown
+exit
