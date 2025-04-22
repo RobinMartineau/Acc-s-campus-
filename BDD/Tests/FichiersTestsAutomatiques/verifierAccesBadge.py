@@ -2,7 +2,7 @@ import pytest
 from fastapi import HTTPException
 from unittest.mock import MagicMock
 from schemas import AccesRequest
-from routes.pea import verifierAcces
+from routes.pea import verifierAccesBadge
 from dotenv import load_dotenv
 
 #Mocks simples pour les modèles
@@ -41,7 +41,7 @@ def test_equipement_introuvable():
     req = AccesRequest(uid="123", adresse_mac="00:11:22:33:44")
     
     with pytest.raises(HTTPException) as exc:
-        verifierAcces(req, db)
+        verifierAccesBadge(req, db)
     assert exc.value.status_code == 404
     assert "Équipement introuvable" in exc.value.detail
 
@@ -52,7 +52,7 @@ def test_equipement_bae():
     req = AccesRequest(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
-        verifierAcces(req, db)
+        verifierAccesBadge(req, db)
     assert exc.value.status_code == 400
 
 #T1.3 - Badge inconnu
@@ -65,7 +65,7 @@ def test_badge_inconnu():
     req = AccesRequest(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
-        verifierAcces(req, db)
+        verifierAccesBadge(req, db)
     assert exc.value.status_code == 404
     assert "Badge inconnu ou non associé" in exc.value.detail
 
@@ -79,7 +79,7 @@ def test_badge_non_associe_a_utilisateur():
     req = AccesRequest(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
-        verifierAcces(req, db)
+        verifierAccesBadge(req, db)
     assert exc.value.status_code == 404
     assert "Badge inconnu ou non associé" in exc.value.detail
 
@@ -94,7 +94,7 @@ def test_utilisateur_inconnu():
     req = AccesRequest(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
-        verifierAcces(req, db)
+        verifierAccesBadge(req, db)
     assert exc.value.status_code == 404
 
 #T1.6 - Badge désactivé
@@ -108,7 +108,7 @@ def test_badge_desactive():
     req = AccesRequest(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
-        verifierAcces(req, db)
+        verifierAccesBadge(req, db)
     assert exc.value.status_code == 403
 
 #T1.7 - Équipement sans salle
@@ -123,7 +123,7 @@ def test_salle_introuvable():
     req = AccesRequest(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
-        verifierAcces(req, db)
+        verifierAccesBadge(req, db)
     assert exc.value.status_code == 404
 
 #T1.8 - Aucun accès autorisé ni cours
@@ -139,7 +139,7 @@ def test_acces_refuse_aucune_autorisation_et_cours():
     req = AccesRequest(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
-        verifierAcces(req, db)
+        verifierAccesBadge(req, db)
     assert exc.value.status_code == 403
 
 #T1.9 - Autorisation trouvée mais refusée
@@ -155,7 +155,7 @@ def test_autorisation_refusee():
     req = AccesRequest(uid="123", adresse_mac="00:11")
 
     with pytest.raises(HTTPException) as exc:
-        verifierAcces(req, db)
+        verifierAccesBadge(req, db)
     assert exc.value.status_code == 403
     assert "Accès refusé" in exc.value.detail
 
@@ -171,7 +171,7 @@ def test_acces_autorise_par_autorisation():
     ]
     req = AccesRequest(uid="123", adresse_mac="00:11")
 
-    result = verifierAcces(req, db)
+    result = verifierAccesBadge(req, db)
     assert result["nom"] == "Jean"
     assert result["prenom"] == "Dupont"
     assert result["role"] == "eleve"
@@ -189,7 +189,7 @@ def test_acces_autorise_par_edt():
     ]
     req = AccesRequest(uid="123", adresse_mac="00:11")
 
-    result = verifierAcces(req, db)
+    result = verifierAccesBadge(req, db)
     assert result["nom"] == "Jean"
     assert result["prenom"] == "Dupont"
     assert result["role"] == "eleve"
