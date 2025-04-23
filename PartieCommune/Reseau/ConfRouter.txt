@@ -1,0 +1,31 @@
+-- DOCUMENT REALISE PAR LORICK FOUQUET --
+Host name: Router1
+domain-name: campus.local
+username: admin | secret: BTS2425
+secret: BTS2425
+
+//Activer auth local vty
+enable
+conf t
+line vty 0 15
+login local
+transport input ssh
+exit
+
+//Génère une cle RSA
+crypto key generate rsa
+-->1024
+
+//Activer SSH
+ip ssh version 2
+
+//Configurer l'interface fa0
+enable
+conf t
+interface fa0
+ip address 192.168.248.1 255.255.248.0
+no shutdown
+exit
+
+//Se connecter en SSH
+ssh -oHostKeyAlgorithms=+ssh-rsa -oKexAlgorithms=+diffie-hellman-group1-sha1 -oCiphers=+aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc -oMACs=+hmac-sha1,hmac-sha1-96,hmac-md5,hmac-md5-96 admin@192.168.248.1

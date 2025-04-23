@@ -1,3 +1,5 @@
+-- DOCUMENT REALISE PAR LORICK FOUQUET --
+
 SUR LE POSTE SERVER WEB (PSW) (ou alors sur un serveur dédier)
 
 //Installer isc-dhcp-server
@@ -14,7 +16,7 @@ sudo micro /etc/dhcp/dhcpd.conf
 subnet 192.168.248.0 netmask 255.255.248.0 {
     range 192.168.248.101 192.168.250.254;
     option domain-name-servers 8.8.8.8, 8.8.4.4;
-    option domain-name "";
+    option domain-name "campus.local";
     default-lease-time 86400; # 1 jour
     max-lease-time 604800;    # 7 jours
 }

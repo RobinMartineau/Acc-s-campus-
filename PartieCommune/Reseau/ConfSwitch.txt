@@ -1,3 +1,5 @@
+-- DOCUMENT REALISE PAR LORICK FOUQUET --
+
 Host name: Switch1
 domain-name: campus.local
 username: admin | secret: BTS2425
@@ -31,6 +33,9 @@ exit
 vlan 30
 name Administration
 exit
+vlan 99
+name Router
+exit
 
 //Configuration vlan 10
 interface vlan 10
@@ -48,14 +53,27 @@ ip address 192.168.248.2 255.255.248.0
 no shutdown
 exit
 
+//Configuration vlan 99
+interface vlan 99
+no shutdown
+exit
+
 //Repartition des interfaces
-vlan 10: fa0/13 --> fa0/24
-vlan 20: fa0/5 --> fa0/12
-vlan 30: fa0/1 --> fa0/4
+vlan 10 (Publique): fa0/13 --> fa0/24
+vlan 20 (Badge): fa0/5 --> fa0/12
+vlan 30 (Administration): fa0/1 --> fa0/4
+vlan 99 (Router): gi0/1
 
 //Exemple configuration interface fa0/1
 interface fa0/1
 switchport mode access
 switchport access vlan 30
+no shutdown
+exit
+
+//Exemple configuration interface gi0/1 mode trunk
+interface gi0/1
+switchport mode trunk
+switchport trunk allowed vlan 10,20,30,99
 no shutdown
 exit
