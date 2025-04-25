@@ -1,29 +1,47 @@
 -- DOCUMENT REALISE PAR LORICK FOUQUET --
 
-Host name: Switch1
-domain-name: campus.local
-username: admin | secret: BTS2425
-secret: BTS2425
+//Passer en mode privilégié
+enable
+
+//Conf basique
+conf t
+hostname Switch1
+ip domain-name campus.local
+username admin secret BTS2425
+enable secret BTS2425
+end
+copy running-config startup-config
+--> startup-config
 
 //Activer auth local vty
-enable
 conf t
 line vty 0 15
 login local
 transport input ssh
-exit
+end
+copy running-config startup-config
+--> startup-config
 
 //Génère une cle RSA
+conf t
 crypto key generate rsa
 -->1024
+end
+copy running-config startup-config
+--> startup-config
 
 //Activer SSH
+conf t
 ip ssh version 2
+end
+copy running-config startup-config
+--> startup-config
 
 //Se connecter en SSH (depuis un PC)
 ssh -oHostKeyAlgorithms=+ssh-rsa -oKexAlgorithms=+diffie-hellman-group1-sha1 -oCiphers=+aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc -oMACs=+hmac-sha1,hmac-sha1-96,hmac-md5,hmac-md5-96 admin@192.168.248.2
 
 //Ajout vlan
+conf t
 vlan 10
 name Publique
 exit
@@ -35,28 +53,30 @@ name Administration
 exit
 vlan 99
 name Router
-exit
+end
+copy running-config startup-config
+--> startup-config
 
-//Configuration vlan 10
+//Configuration des vlan 10, 20, 30, 99
+conf t
 interface vlan 10
+ip address 192.168.0.2 255.255.252.0
 no shutdown
 exit
-
-//Configuration vlan 20
 interface vlan 20
+ip address 192.168.4.2 255.255.252.0
 no shutdown
 exit
-
-//Configuration vlan 30
 interface vlan 30
-ip address 192.168.248.2 255.255.248.0
+ip address 192.168.30.2 255.255.255.0
 no shutdown
 exit
-
-//Configuration vlan 99
+conf t
 interface vlan 99
 no shutdown
-exit
+end
+copy running-config startup-config
+--> startup-config
 
 //Repartition des interfaces
 vlan 10 (Publique): fa0/13 --> fa0/24
@@ -65,15 +85,21 @@ vlan 30 (Administration): fa0/1 --> fa0/4
 vlan 99 (Router): gi0/1
 
 //Exemple configuration interface fa0/1
+conf t
 interface fa0/1
 switchport mode access
 switchport access vlan 30
 no shutdown
-exit
+end
+copy running-config startup-config
+--> startup-config
 
 //Exemple configuration interface gi0/1 mode trunk
+conf t
 interface gi0/1
 switchport mode trunk
 switchport trunk allowed vlan 10,20,30,99
 no shutdown
-exit
+end
+copy running-config startup-config
+--> startup-config

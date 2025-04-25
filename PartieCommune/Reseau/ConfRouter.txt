@@ -1,31 +1,101 @@
 -- DOCUMENT REALISE PAR LORICK FOUQUET --
-Host name: Router1
-domain-name: campus.local
-username: admin | secret: BTS2425
-secret: BTS2425
+
+//Passer en mode privilégié
+enable
+
+//Conf basique
+conf t
+hostname Router1
+ip domain-name  campus.local
+username admin secret BTS2425
+enable secret BTS2425
+end
+copy running-config startup-config
+--> startup-config
 
 //Activer auth local vty
-enable
 conf t
 line vty 0 15
 login local
 transport input ssh
-exit
+end
+copy running-config startup-config
+--> startup-config
+
 
 //Génère une cle RSA
+conf t
 crypto key generate rsa
 -->1024
+end
+copy running-config startup-config
+--> startup-config
 
 //Activer SSH
+conf t
 ip ssh version 2
+end
+copy running-config startup-config
+--> startup-config
 
 //Configurer l'interface fa0
-enable
 conf t
 interface fa0
-ip address 192.168.248.1 255.255.248.0
 no shutdown
-exit
+end
+copy running-config startup-config
+--> startup-config
 
 //Se connecter en SSH
 ssh -oHostKeyAlgorithms=+ssh-rsa -oKexAlgorithms=+diffie-hellman-group1-sha1 -oCiphers=+aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc -oMACs=+hmac-sha1,hmac-sha1-96,hmac-md5,hmac-md5-96 admin@192.168.248.1
+
+//Activer le routage
+conf t
+ip routing
+end
+copy running-config startup-config
+--> startup-config
+
+//Créer des sous-interfaces pour chaque vlan
+conf t
+interface fa0.10
+encapsulation dot1Q 10
+ip address 192.168.0.1 255.255.252.0
+exit
+interface fa0.20
+encapsulation dot1Q 20
+ip address 192.168.4.1 255.255.252.0
+exit
+interface fa0.30
+encapsulation dot1Q 30
+ip address 192.168.30.1 255.255.255.0
+end
+copy running-config startup-config
+--> startup-config
+
+//Ajout de l'ACL ACCES_CAMPUS
+conf t
+ip access-list extended ACCES_CAMPUS
+! Autoriser VLAN 30 vers VLAN 10
+permit ip 192.168.30.0 0.0.0.255 192.168.0.0 0.0.3.255
+! Autoriser VLAN 20 vers VLAN 30 et inversement
+permit ip 192.168.4.0 0.0.3.255 192.168.30.0 0.0.0.255
+permit ip 192.168.30.0 0.0.0.255 192.168.4.0 0.0.3.255
+! Bloquer VLAN 10 vers VLAN 30 et 20
+deny ip 192.168.0.0 0.0.3.255 192.168.30.0 0.0.0.255
+deny ip 192.168.0.0 0.0.3.255 192.168.4.0 0.0.3.255
+! Bloquer VLAN 20 vers VLAN 10
+deny ip 192.168.4.0 0.0.3.255 192.168.0.0 0.0.3.255
+end
+copy running-config startup-config
+--> startup-config
+
+//Lier l'ACL avec l'interface fa0
+conf t
+interface fa0
+ip access-group ACCES_CAMPUS in
+end
+copy running-config startup-config
+--> startup-config
+
+
