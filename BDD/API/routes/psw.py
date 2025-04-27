@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from database import SessionLocal
 import models
 import schemas
@@ -253,3 +254,185 @@ def getEleve(db: Session = Depends(get_db)):
         }
         for utilisateur in eleve
     ]
+
+#Route GET pour récupérer l'activité dans une salle en temps réel (emploie du temps et utilisateurs présent)
+@router.get(
+    "/psw/salle/{id_salle}/activite",
+    summary="Obtenir les activités d'une salle",
+    description=(
+        "Cette route permet d'obtenir :\n\n"
+        "- Les réservations (EDTSalle) liées à une salle (horaire, cours, utilisateur associé).\n"
+        "- La liste des utilisateurs ayant utilisé leur badge dans cette salle il y a moins d'une heure (dernier badge uniquement).\n"
+        "- Le nombre total de ces utilisateurs ayant badgé.\n"
+    ),
+    responses={
+        200: {
+            "description": "Réservations et utilisateurs récupérés avec succès",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "reservations": [
+                            {
+                                "horairedebut": "2025-04-10T08:00:00",
+                                "horairefin": "2025-04-10T09:00:00",
+                                "cours": "Maths",
+                                "utilisateur": {
+                                    "id": 12,
+                                    "nom": "Lemoine",
+                                    "prenom": "Arthur"
+                                }
+                            }
+                        ],
+                        "utilisateurs_derniere_heure": [
+                            {
+                                "id": 12,
+                                "nom": "Lemoine",
+                                "prenom": "Arthur"
+                            },
+                            {
+                                "id": 17,
+                                "nom": "Benoit",
+                                "prenom": "Lucie"
+                            }
+                        ],
+                        "nombre_utilisateurs": 2
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Ressources manquantes ou erreur de cohérence",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "Salle introuvable": {
+                            "summary": "ID de salle invalide",
+                            "value": {"detail": "Salle non trouvée"}
+                        },
+                        "Aucune réservation": {
+                            "summary": "Aucun cours enregistré dans cette salle",
+                            "value": {"detail": "Aucune réservation trouvée pour cette salle"}
+                        },
+                        "Réservation sans utilisateur": {
+                            "summary": "Erreur de données",
+                            "value": {"detail": "Réservation sans utilisateur associée (ID réservation 23)"}
+                        },
+                        "Utilisateur réservation inconnu": {
+                            "summary": "Utilisateur non présent en base",
+                            "value": {"detail": "Utilisateur (ID 8) introuvable pour une réservation"}
+                        },
+                        "Aucun log récent": {
+                            "summary": "Pas d'activité dans l'heure",
+                            "value": {"detail": "Aucun badge utilisé dans cette salle depuis moins d'une heure"}
+                        },
+                        "Badge introuvable": {
+                            "summary": "Badge UID non présent",
+                            "value": {"detail": "Badge UID A1B2 introuvable"}
+                        },
+                        "Badge non associé": {
+                            "summary": "Badge sans utilisateur",
+                            "value": {"detail": "Badge UID A1B2 non associé à un utilisateur"}
+                        },
+                        "Utilisateur badge introuvable": {
+                            "summary": "Utilisateur non trouvé pour badge",
+                            "value": {"detail": "Utilisateur ID 9 introuvable pour badge UID A1B2"}
+                        },
+                        "Aucun utilisateur final": {
+                            "summary": "Aucune ligne valide trouvée",
+                            "value": {"detail": "Aucun utilisateur valide ayant badgé dans l'heure"}
+                        }
+                    }
+                }
+            }
+        }
+    },
+tags=["PSW"])
+def activiteSalle(id_salle: int, db: Session = Depends(get_db)):
+    #Vérification de l'existence de la salle
+    salle = db.query(models.Salle).filter(
+        models.Salle.id == id_salle
+        ).first()
+    if not salle:
+        raise HTTPException(status_code=404, detail="Salle non trouvée")
+
+    #Récupérer les réservations
+    edtsalle = db.query(models.EDTSalle).filter(
+        models.EDTSalle.id_salle == id_salle
+        ).all()
+    if not edtsalle:
+        raise HTTPException(status_code=404, detail="Aucune réservation trouvée pour cette salle")
+
+    reservations = []
+    for res in edtsalle:
+        if not res.id_utilisateur:
+            raise HTTPException(status_code=404, detail=f"Réservation sans utilisateur associée (ID réservation {res.id})")
+
+        utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == res.id_utilisateur).first()
+        if not utilisateur:
+            raise HTTPException(status_code=404, detail=f"Utilisateur (ID {res.id_utilisateur}) introuvable pour une réservation")
+
+        reservations.append({
+            "horairedebut": res.horairedebut,
+            "horairefin": res.horairefin,
+            "cours": res.cours,
+            "utilisateur": {
+                "id": utilisateur.id,
+                "nom": utilisateur.nom,
+                "prenom": utilisateur.prenom
+            }
+        })
+
+    #Logs de badge dans l'heure passée
+    il_y_a_une_heure = datetime.datetime.now() - datetime.timedelta(hours=1)
+
+    subquery = (
+        db.query(
+            models.Log.uid,
+            func.max(models.Log.horaire).label("dernier_passage")
+        )
+        .group_by(models.Log.uid)
+        .subquery()
+    )
+
+    logs_recents = (
+        db.query(models.Log)
+        .join(models.Equipement, models.Log.id_equipement == models.Equipement.id)
+        .join(subquery, models.Log.uid == subquery.c.uid)
+        .filter(
+            models.Equipement.id_salle == id_salle,
+            models.Log.horaire == subquery.c.dernier_passage,
+            models.Log.horaire >= il_y_a_une_heure
+        )
+        .all()
+    )
+
+    if not logs_recents:
+        raise HTTPException(status_code=404, detail="Aucun badge utilisé dans cette salle depuis moins d'une heure")
+
+    utilisateurs_badge = []
+    for log in logs_recents:
+        badge = db.query(models.Badge).filter(models.Badge.uid == log.uid).first()
+        if not badge:
+            raise HTTPException(status_code=404, detail=f"Badge UID {log.uid} introuvable")
+        if not badge.id_utilisateur:
+            raise HTTPException(status_code=404, detail=f"Badge UID {log.uid} non associé à un utilisateur")
+
+        utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == badge.id_utilisateur).first()
+        if not utilisateur:
+            raise HTTPException(status_code=404, detail=f"Utilisateur ID {badge.id_utilisateur} introuvable pour badge UID {log.uid}")
+
+        utilisateurs_badge.append({
+            "id": utilisateur.id,
+            "nom": utilisateur.nom,
+            "prenom": utilisateur.prenom
+        })
+
+    if not utilisateurs_badge:
+        raise HTTPException(status_code=404, detail="Aucun utilisateur valide ayant badgé dans l'heure")
+
+    return {
+        "reservations": reservations,
+        "utilisateurs_derniere_heure": utilisateurs_badge,
+        "nombre_utilisateurs": len(utilisateurs_badge)
+    }
+
