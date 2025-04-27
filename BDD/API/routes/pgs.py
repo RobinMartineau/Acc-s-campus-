@@ -43,12 +43,12 @@ def get_db():
     }, 
 tags=["PGS"])
 def getUtilisateurs(db: Session = Depends(get_db)):
-    utilisateur = db.query(models.Utilisateur).all()
+    utilisateurs = db.query(models.Utilisateur).all()
 
-    if not utilisateur:
+    if not utilisateurs:
         raise HTTPException(status_code = 404, detail = "Aucun utilisateur")
 
-    utilisateur_clair = [schemas.RecupUtilisateur.from_orm(u) for u in utilisateur]
+    utilisateur_clair = [schemas.RecupUtilisateur.from_orm(u) for u in utilisateurs]
     
     return utilisateur_clair
 

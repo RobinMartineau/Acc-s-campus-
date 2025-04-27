@@ -71,7 +71,6 @@ interface vlan 30
 ip address 192.168.30.2 255.255.255.0
 no shutdown
 exit
-conf t
 interface vlan 99
 no shutdown
 end
