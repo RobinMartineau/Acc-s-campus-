@@ -26,8 +26,8 @@ def get_db():
             "content": {
                 "application/json": {
                     "example": [
-                        {"id": 1, "nom": "Dupont", "prenom": "Jean", "identifiant": "jean.dupont", "role": "Eleve", "date_de_naissance": "2005-04-01", "mot_de_passe": "Tynego28", "id_classe": "1"},
-                        {"id": 1, "nom": "Marie", "prenom": "Frank", "identifiant": "frank.marie", "role": "Prof", "date_de_naissance": "1976-05-11", "mot_de_passe": "Gezaqi71", "id_classe": "null"},
+                        {"id": 1, "nom": "Dupont", "prenom": "Jean", "identifiant": "jean.dupont", "role": "Eleve", "date_de_naissance": "2005-04-01", "mot_de_passe": "Tynego28", "classe": "Ciel"},
+                        {"id": 1, "nom": "Marie", "prenom": "Frank", "identifiant": "frank.marie", "role": "Prof", "date_de_naissance": "1976-05-11", "mot_de_passe": "Gezaqi71", "classe": "null"},
                     ]
                 }
             }
@@ -49,8 +49,24 @@ def getUtilisateurs(db: Session = Depends(get_db)):
         raise HTTPException(status_code = 404, detail = "Aucun utilisateur")
 
     utilisateur_clair = [schemas.RecupUtilisateur.from_orm(u) for u in utilisateurs]
+
+    id_classe = [classe.id for classe in utilisateur_clair]
     
-    return utilisateur_clair
+    classe = db.query(models.Utilisateur).filter(
+        models.Classe.id.in_(id_classe)
+    ).first()
+    
+    return [{
+        "id": utilisateur.id,
+        "nom": utilisateur.nom,
+        "prenom": utilisateur.prenom,
+        "identifiant": utilisateur.identifiant,
+        "role": utilisateur.role,
+        "digicode": utilisateur.digicode,
+        "date_de_naissance": utilisateur.date_de_naissance,
+        "mot_de_passe": utilisateur.mot_de_passe,
+        "classe": classe.nom if (classe := db.query(models.Classe).filter(models.Classe.id == utilisateur.id_classe).first()) else None
+    } for utilisateur in utilisateur_clair]
 
 #Route PUT pour modifier un utilisateur
 @router.put("/pgs/modifier/utilisateur/{id_utilisateur}", response_model=schemas.UtilisateurResponse, include_in_schema = False)
