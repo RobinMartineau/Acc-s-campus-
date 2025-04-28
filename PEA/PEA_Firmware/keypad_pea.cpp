@@ -1,5 +1,6 @@
 #include "pea.h"
 
+
 Keypad4x4::Keypad4x4(const byte* rowPins,
                      const byte* colPins,
                      const char* keymap,
@@ -66,10 +67,30 @@ int Keypad4x4::readColumns() {
 
 String Keypad4x4::password() {
   String passwordKeys = "";
-  while(passwordKeys.length() < 6){
+  bool saisieCommencee = false;
+
+  afficherMessage("Tapez votre code");
+
+  while (passwordKeys.length() < 6) {
     char k = getKey();
-    if(k){
+    if (k) {
+      if (!saisieCommencee) {
+        // La saisie commence avec le premier caractère
+        saisieCommencee = true;
+        tft.fillScreen(ILI9341_WHITE);  // Efface l'écran pour commencer l'affichage du code
+        tft.setTextColor(ILI9341_BLACK);
+        tft.setTextSize(3);
+        tft.setCursor(20, 80);
+        tft.println("Code:");
+      }
+
       passwordKeys += k;
+
+      // Réaffiche le code actuel à chaque touche tapée
+      tft.setCursor(20, 130);
+      tft.setTextSize(4);
+      tft.setTextColor(ILI9341_BLACK);
+      tft.print(passwordKeys);
     }
   }
   return passwordKeys;

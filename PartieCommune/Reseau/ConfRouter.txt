@@ -22,7 +22,6 @@ end
 copy running-config startup-config
 --> startup-config
 
-
 //Génère une cle RSA
 conf t
 crypto key generate rsa
@@ -46,6 +45,15 @@ end
 copy running-config startup-config
 --> startup-config
 
+//Configurer l'interface vlan 99
+conf t
+interface vlan 99
+ip address 192.168.248.1 255.255.255.0
+no shutdown
+end
+copy running-config startup-config
+--> startup-config
+
 //Se connecter en SSH
 ssh -oHostKeyAlgorithms=+ssh-rsa -oKexAlgorithms=+diffie-hellman-group1-sha1 -oCiphers=+aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc -oMACs=+hmac-sha1,hmac-sha1-96,hmac-md5,hmac-md5-96 admin@192.168.248.1
 
@@ -61,14 +69,17 @@ conf t
 interface fa0.10
 encapsulation dot1Q 10
 ip address 192.168.0.1 255.255.252.0
+ip helper-address 192.168.30.3
 exit
 interface fa0.20
 encapsulation dot1Q 20
 ip address 192.168.4.1 255.255.252.0
+ip helper-address 192.168.30.3
 exit
 interface fa0.30
 encapsulation dot1Q 30
 ip address 192.168.30.1 255.255.255.0
+ip helper-address 192.168.30.3
 end
 copy running-config startup-config
 --> startup-config
@@ -76,16 +87,26 @@ copy running-config startup-config
 //Ajout de l'ACL ACCES_CAMPUS
 conf t
 ip access-list extended ACCES_CAMPUS
-! Autoriser VLAN 30 vers VLAN 10
+! Autoriser DHCP entre VLAN 30 et VLAN 10 et VLAN 20
+permit udp 192.168.30.0 0.0.0.255 192.168.0.0 0.0.3.255 eq 68
+permit udp 192.168.0.0 0.0.3.255 192.168.30.0 0.0.0.255 eq 67
+permit udp 192.168.4.0 0.0.3.255 192.168.30.0 0.0.0.255 eq 67
+permit udp 192.168.30.0 0.0.0.255 192.168.4.0 0.0.3.255 eq 68
+! Autoriser port 8000 (API) du VLAN 20 vers VLAN 30
+permit tcp 192.168.4.0 0.0.3.255 192.168.30.0 0.0.0.255 eq 8000
+! Autoriser tout le trafic du VLAN 30 vers VLAN 10 et VLAN 20
 permit ip 192.168.30.0 0.0.0.255 192.168.0.0 0.0.3.255
-! Autoriser VLAN 20 vers VLAN 30 et inversement
-permit ip 192.168.4.0 0.0.3.255 192.168.30.0 0.0.0.255
 permit ip 192.168.30.0 0.0.0.255 192.168.4.0 0.0.3.255
-! Bloquer VLAN 10 vers VLAN 30 et 20
-deny ip 192.168.0.0 0.0.3.255 192.168.30.0 0.0.0.255
+! Bloquer tout le trafic du VLAN 10 vers VLAN 20
 deny ip 192.168.0.0 0.0.3.255 192.168.4.0 0.0.3.255
-! Bloquer VLAN 20 vers VLAN 10
+! Bloquer tout le trafic du VLAN 10 vers VLAN 30
+deny ip 192.168.0.0 0.0.3.255 192.168.30.0 0.0.0.255
+! Bloquer tout le trafic du VLAN 20 vers VLAN 10
 deny ip 192.168.4.0 0.0.3.255 192.168.0.0 0.0.3.255
+! Bloquer tout le trafic du VLAN 20 vers VLAN 30, sauf port 8000
+deny ip 192.168.4.0 0.0.3.255 192.168.30.0 0.0.0.255
+! Permettre toutes les connexions autorisées dans les lignes précédentes
+permit ip any any
 end
 copy running-config startup-config
 --> startup-config

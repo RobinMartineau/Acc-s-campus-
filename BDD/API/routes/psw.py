@@ -321,10 +321,6 @@ def getEleve(db: Session = Depends(get_db)):
                             "summary": "Utilisateur non présent en base",
                             "value": {"detail": "Utilisateur (ID 8) introuvable pour une réservation"}
                         },
-                        "Aucun log récent": {
-                            "summary": "Pas d'activité dans l'heure",
-                            "value": {"detail": "Aucun badge utilisé dans cette salle depuis moins d'une heure"}
-                        },
                         "Badge introuvable": {
                             "summary": "Badge UID non présent",
                             "value": {"detail": "Badge UID A1B2 introuvable"}
@@ -365,11 +361,11 @@ def activiteSalle(id_salle: int, db: Session = Depends(get_db)):
     reservations = []
     for res in edtsalle:
         if not res.id_utilisateur:
-            raise HTTPException(status_code=404, detail=f"Réservation sans utilisateur associée (ID réservation {res.id})")
+            raise HTTPException(status_code=404, detail=f"Réservation sans utilisateur associée")
 
         utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == res.id_utilisateur).first()
         if not utilisateur:
-            raise HTTPException(status_code=404, detail=f"Utilisateur (ID {res.id_utilisateur}) introuvable pour une réservation")
+            raise HTTPException(status_code=404, detail=f"Utilisateur introuvable pour une réservation")
 
         reservations.append({
             "horairedebut": res.horairedebut,
@@ -406,33 +402,26 @@ def activiteSalle(id_salle: int, db: Session = Depends(get_db)):
         .all()
     )
 
-    if not logs_recents:
-        raise HTTPException(status_code=404, detail="Aucun badge utilisé dans cette salle depuis moins d'une heure")
-
-    utilisateurs_badge = []
+    utilisateurs_derniere_heure = []
+    
     for log in logs_recents:
-        badge = db.query(models.Badge).filter(models.Badge.uid == log.uid).first()
-        if not badge:
-            raise HTTPException(status_code=404, detail=f"Badge UID {log.uid} introuvable")
-        if not badge.id_utilisateur:
-            raise HTTPException(status_code=404, detail=f"Badge UID {log.uid} non associé à un utilisateur")
+        badge = db.query(models.Badge).filter(models.Badge.uid == log.id_badge).first()
+        if badge is None:
+            raise HTTPException(status_code=404, detail="Badge non trouvé.")
+        
+        if badge.id_utilisateur is None:
+            raise HTTPException(status_code=404, detail="Badge non associé à un utilisateur.")
+        
+        utilisateur_badge = db.query(models.Utilisateur).filter(models.Utilisateur.id == badge.id_utilisateur).first()
+        if utilisateur_badge is None:
+            raise HTTPException(status_code=404, detail="Utilisateur du badge non trouvé.")
 
-        utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == badge.id_utilisateur).first()
-        if not utilisateur:
-            raise HTTPException(status_code=404, detail=f"Utilisateur ID {badge.id_utilisateur} introuvable pour badge UID {log.uid}")
-
-        utilisateurs_badge.append({
-            "id": utilisateur.id,
-            "nom": utilisateur.nom,
-            "prenom": utilisateur.prenom
-        })
-
-    if not utilisateurs_badge:
-        raise HTTPException(status_code=404, detail="Aucun utilisateur valide ayant badgé dans l'heure")
+        utilisateurs_derniere_heure.append(utilisateur_badge)
 
     return {
         "reservations": reservations,
-        "utilisateurs_derniere_heure": utilisateurs_badge,
-        "nombre_utilisateurs": len(utilisateurs_badge)
+        "utilisateurs_derniere_heure": utilisateurs_derniere_heure,
+        "nombre_utilisateurs": len(utilisateurs_derniere_heure)
     }
+
 
