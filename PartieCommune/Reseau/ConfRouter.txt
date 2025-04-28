@@ -61,14 +61,17 @@ conf t
 interface fa0.10
 encapsulation dot1Q 10
 ip address 192.168.0.1 255.255.252.0
+ip helper-address 192.168.30.3
 exit
 interface fa0.20
 encapsulation dot1Q 20
 ip address 192.168.4.1 255.255.252.0
+ip helper-address 192.168.30.3
 exit
 interface fa0.30
 encapsulation dot1Q 30
 ip address 192.168.30.1 255.255.255.0
+ip helper-address 192.168.30.3
 end
 copy running-config startup-config
 --> startup-config
