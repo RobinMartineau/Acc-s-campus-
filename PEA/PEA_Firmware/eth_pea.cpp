@@ -2,11 +2,11 @@
 
 //Définitions
 byte mac[] = {0x00, 0x80, 0xE1, 0x12, 0x34, 0x56};
-IPAddress serverIP(192, 168, 248, 3);
+IPAddress serverIP(192, 168, 30, 3);
 unsigned int serverPort = 8000;
 char* uid = "40A255C4";  
 EthernetClient client;
-
+   
 //Fonction d'initialisation
 void setupEthernet() {
   Serial.begin(115200);
@@ -21,7 +21,9 @@ void setupEthernet() {
     Serial.println("Échec de la configuration Ethernet via DHCP");
     while (true) {
     }
+   delay(500);
   }
+   Ethernet.init(PA4);
   IPAddress ip = Ethernet.localIP();
   IPAddress gw = Ethernet.gatewayIP();
   IPAddress mask = Ethernet.subnetMask();
@@ -52,8 +54,8 @@ String sendHttpPost(String uidHex)
   if (client.connect(serverIP, serverPort)) {
     Serial.println("Connecté au serveur, envoi de la requête HTTP POST...");
 
-    client.println("POST /pea/acces/ HTTP/1.1");
-    client.println("Host: 192.168.248.1:8000");
+    client.println("POST /pea/acces/badge HTTP/1.1");
+    client.println("Host: 192.168.30.3:8000");
     client.println("Content-Type: application/json");
     client.print("Content-Length: ");
     client.println(jsonBody.length());
@@ -101,8 +103,8 @@ String sendHttpPostPassword(String code)
   if (client.connect(serverIP, serverPort)) {
     Serial.println("Connecté au serveur, envoi de la requête HTTP POST...");
 
-    client.println("POST /pea/acces/ HTTP/1.1");
-    client.println("Host: 192.168.248.1:8000");
+    client.println("POST /pea/acces/digicode HTTP/1.1");
+    client.println("Host: 192.168.30.3:8000");
     client.println("Content-Type: application/json");
     client.print("Content-Length: ");
     client.println(jsonBody.length());

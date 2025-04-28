@@ -15,7 +15,7 @@ extern IPAddress serverIP;
 extern unsigned int serverPort;
 extern char* uid; 
 extern EthernetClient client;
-
+extern Adafruit_ILI9341 tft;
 extern volatile uint64_t wiegandData;
 extern volatile int bitCount;
 extern volatile unsigned long lastPulseTime;
@@ -53,6 +53,9 @@ unsigned long ethSetup();
 unsigned long useRFID();
 unsigned long useDigits();
 unsigned long writeUID(String uid);
+
+void afficherErreur(String message);
+void afficherMessage(String message);
 
 #endif
 

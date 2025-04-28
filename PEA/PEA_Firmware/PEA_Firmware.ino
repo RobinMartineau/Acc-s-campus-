@@ -1,7 +1,17 @@
 #include "pea.h"
 
-const byte rowPins[4] = {PB7, PB8, PB9, PB10};
-const byte colPins[4] = {PB11, PB12, PB13, PB14};
+enum ModeAcces {
+  MODE_INDEFINI,
+  MODE_RFID,
+  MODE_DIGICODE
+};
+
+ModeAcces modeActuel = MODE_INDEFINI;
+
+
+
+const byte rowPins[4] = {PB10, PB9, PB8, PB7};
+const byte colPins[4] = {PB14, PB13, PB12, PB11};
 const char keys[16] = {
   '1','2','3','A',
   '4','5','6','B',
@@ -32,6 +42,7 @@ void setup() {
   keypad.begin();
   ILIInit();
   
+  
   attachInterrupt(digitalPinToInterrupt(D0_PIN), D0Interrupt, FALLING);
   attachInterrupt(digitalPinToInterrupt(D1_PIN), D1Interrupt, FALLING);
   Serial.println("Lecture brute Wiegand en cours...");
@@ -45,23 +56,77 @@ void setup() {
   Serial.println("Fin du setup !");
   verifySetup();
   delay(1000);
-  //ethSetup();
-  //delay(2000);
-  askUser();
+  setupEthernet();
+  ethSetup();
+  delay(2000);
+  menuChoixMode();
+}
+
+void menuChoixMode() {
+  afficherMessage("1: RFID  2: Digicode");
+
+  bool choixFait = false;
+  while (!choixFait) {
+    char k = keypad.getKey();
+    if (k) {
+      if (k == '1') {
+        modeActuel = MODE_RFID;
+        afficherMessage("Mode RFID choisi");
+        delay(1000);
+        choixFait = true;
+      } else if (k == '2') {
+        modeActuel = MODE_DIGICODE;
+        afficherMessage("Mode Digicode choisi");
+        delay(1000);
+        choixFait = true;
+      } else {
+        afficherErreur("Choix invalide");
+        delay(1000);
+        afficherMessage("1: RFID  2: Digicode");
+      }
+    }
+  }
 }
 
 void loop() {
-  delay(5000);
-  // Tente de lire un badge (si la trame est complète et le timeout atteint)
-  String uidLu = "30E64AC4";
+ if (modeActuel == MODE_RFID) {
+    useRFID();
 
-  if (uidLu != "") {
-    // UID détecté, on l'envoie au serveur
-    String reponseServeur = sendHttpPost(uidLu);
-    
-    // Analyse de la réponse : ouvre la gâche si autorisé
-    actionResponse(reponseServeur);
-    Serial.println(Ethernet.localIP());
+    String dataToSend = "";
+
+    // Attente indéfinie d'un badge
+    while (dataToSend == "") {
+      lireBadge26();
+      dataToSend = "40A255C4";
+    }
+
+    writeUID(dataToSend);
+
+    String reponseServeur = sendHttpPost(dataToSend);
+    if (reponseServeur.indexOf("\"autorise\":true") != -1) {
+      deverrouillerGache();
+      afficherMessage("Acces Autorise");
+    } else {
+      afficherErreur("Acces Refuse");
+    }
+
+    delay(2000);
+    menuChoixMode();  
   }
-  delay(30000);
+
+  else if (modeActuel == MODE_DIGICODE) {
+    useDigits();
+    String code = keypad.password();
+
+    String reponseServeur = sendHttpPostPassword(code);
+    if (reponseServeur.indexOf("\"autorise\":true") != -1) {
+      deverrouillerGache();
+      afficherMessage("Acces Autorise");
+    } else {
+      afficherErreur("Acces Refuse");
+    }
+
+    delay(2000);
+    menuChoixMode();  
+  }
 }
