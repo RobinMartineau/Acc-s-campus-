@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from routes import utilisateur, autorisation, badge, salle, classe, equipement, edt, pea, bae, pgs, psw
+import ipaddress
 
 app = FastAPI(
     title="API ACCES CAMPUS",
@@ -26,6 +27,34 @@ app = FastAPI(
     ]
 )
 
+# Middleware IP Filtering
+@app.middleware("http")
+async def ip_filter_middleware(request: Request, call_next):
+    # Vérifier si c'est une méthode POST
+    if request.method in {"POST", "DELETE", "PUT"}:
+        client_ip = request.client.host
+
+        try:
+            ip = ipaddress.ip_address(client_ip)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Adresse IP invalide")
+
+        # Définir les sous-réseaux autorisés
+        allowed_networks = [
+            ipaddress.ip_network('192.168.4.0/22'), #VLAN 20
+            ipaddress.ip_network('192.168.30.2/32'), #PGS
+            ipaddress.ip_network('127.0.0.1/32'), #Localhost
+        ]
+
+        # Vérifie si l'IP appartient à l'un des réseaux autorisés
+        if not any(ip in network for network in allowed_networks):
+            raise HTTPException(status_code=403, detail="Accès interdit : IP non autorisée")
+
+    # Continuer la requête
+    response = await call_next(request)
+    return response
+
+
 #Ajout des routes
 app.include_router(utilisateur.router)
 app.include_router(autorisation.router)
@@ -39,13 +68,13 @@ app.include_router(bae.router)
 app.include_router(pgs.router)
 app.include_router(psw.router)
 
-#Temporaire | Autoriser toute les connexions à l'API
+#Autorisation
 app.add_middleware(
-	CORSMiddleware,
-	allow_origins = ["*"],
-	allow_credentials = True,
-	allow_methods = ["*"],
-	allow_headers = ["*"],
+        CORSMiddleware,
+        allow_origins = ["http://localhost:3000"],
+        allow_credentials = True,
+        allow_methods = ["GET", "POST", "PUT", "DELETE"],
+        allow_headers = ["*"],
 )
 
 #Message de bienvenue
