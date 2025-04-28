@@ -16,10 +16,15 @@ class MockUtilisateur:
         self.id_classe = id_classe
         self.digicode = digicode
 
+class MockClasse:
+    def __init__(self, id, nom):
+        self.id = id
+        self.nom = nom
+        
 #T10.1 – Aucun utilisateur
 def test_get_utilisateurs_aucun_utilisateur():
     db = MagicMock()
-    db.query().all.return_value = []  # Aucun utilisateur
+    db.query().all.return_value = []
 
     try:
         getUtilisateurs(db)
@@ -44,12 +49,29 @@ def test_get_utilisateurs_liste_complete():
         )
     ]
 
-    db.query().all.return_value = utilisateurs
+    db.query.return_value.all.return_value = utilisateurs
 
-    response = getUtilisateurs(db)
+    def filter_side_effect(*args, **kwargs):
+        if hasattr(args[0].right, 'value') and args[0].right.value == 1:
+            mock_filter = MagicMock()
+            mock_filter.first.return_value = MockClasse(id=1, nom="CIEL")
+            return mock_filter
+        else:
+            mock_filter = MagicMock()
+            mock_filter.first.return_value = None
+            return mock_filter
 
+    db.query.return_value.filter.side_effect = filter_side_effect
+
+    response = getUtilisateurs(db=db)
+
+    assert isinstance(response, list)
     assert len(response) == 2
-    assert response[0].id == 1
-    assert response[0].mot_de_passe == "Tynego28"
-    assert response[1].id == 2
-    assert response[1].mot_de_passe == "Gezaqi71"
+    assert response[0]["id"] == 1
+    assert response[0]["mot_de_passe"] == "Tynego28"
+    assert response[0]["classe"] == "CIEL"
+    assert response[1]["id"] == 2
+    assert response[1]["mot_de_passe"] == "Gezaqi71"
+    assert response[1]["classe"] is None
+
+

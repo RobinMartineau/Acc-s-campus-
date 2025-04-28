@@ -3,71 +3,63 @@
 volatile uint64_t wiegandData = 0;
 volatile int bitCount = 0;
 volatile unsigned long lastPulseTime = 0;
-String  cardAddress = "";
 
+// Interruption sur D0 (LOW = 0)
 void D0Interrupt() {
   wiegandData = (wiegandData << 1);
   bitCount++;
   lastPulseTime = millis();
 }
 
+// Interruption sur D1 (LOW = 1)
 void D1Interrupt() {
   wiegandData = (wiegandData << 1) | 1;
   bitCount++;
   lastPulseTime = millis();
 }
 
-void decodeWiegand(uint64_t data, int bitCount) {
- if(bitCount != 44) {
-   Serial.println("Erreur : le nombre de bits reçus n'est pas égal à 44.");
-   return;
- }
- 
- uint64_t cardData = data >> 4;  // Exclure les 4 derniers bits (pour la parité)
- uint8_t xorValue = data & 0xF;  // Récupérer les 4 derniers bits (xor)
- uint8_t calculatedXor = 0;
+String lireBadge26() {
+  if (bitCount == 26 && millis() - lastPulseTime > WIEGAND_TIMEOUT) {
+    // Récupère les 26 bits complets tels quels (sans shift ni masquage)
+    uint32_t fullData = wiegandData;
 
- // Calcul du XOR
- for (int i = 0; i < 10; i++) {
-   uint8_t nibble = (cardData >> ((9 - i) * 4)) & 0xF;
-   calculatedXor ^= nibble;
- }
+    // Réinitialise les données Wiegand
+    wiegandData = 0;
+    bitCount = 0;
 
- // Stocker l'adresse en hexadécimal dans la variable cardAddress
- cardAddress = "0x";
- for (int i = 9; i >= 0; i--) {
-   uint8_t nibble = (cardData >> (i * 4)) & 0xF;
-   if(nibble < 10)
-     cardAddress += String(nibble, HEX);
-   else
-     cardAddress += (char)('A' + nibble - 10);
- }
+    // Convertit en string hexadécimale majuscule
+    String uidHex = String(fullData, HEX);
+    uidHex.toUpperCase();
 
- Serial.print("Card Data: 0x");
-  for (int i = 9; i >= 0; i--) {
-    uint8_t nibble = (cardData >> (i * 4)) & 0xF;
-    if(nibble < 10)
-      Serial.print(nibble);
-    else
-      Serial.print((char)('A' + nibble - 10));
+    // Affiche l'UID complet en hexadécimal (les 26 bits)
+    Serial.print("Badge détecté - Données brutes (26 bits) : ");
+    Serial.println(uidHex);
+
+    return uidHex;
   }
-  
-  if(calculatedXor == xorValue) {
-    Serial.println(" + Checksum valide.");
-  } else {
-    Serial.println("Checksum invalide !");
-  }
+
+  // Rien à lire
+  return "";
 }
-void printRawWiegandBits() {
-  Serial.print("Trame reçue (");
-  Serial.print(bitCount);
-  Serial.println(" bits):");
-  
-  for (int i = bitCount - 1; i >= 0; i--) {
-    Serial.print((wiegandData >> i) & 1);
+
+
+String lireBadge34() {
+  if (bitCount == 34 && millis() - lastPulseTime > WIEGAND_TIMEOUT) {
+    // Récupère les 34 bits complets tels quels (sans shift ni masquage)
+    uint32_t fullData = wiegandData;
+
+    // Réinitialise les données Wiegand
+    wiegandData = 0;
+    bitCount = 0;
+
+    // Convertit en string hexadécimale majuscule
+    String uidHex = String(fullData, HEX);
+    uidHex.toUpperCase();
+
+    // Affiche l'UID complet en hexadécimal (les 34 bits)
+    Serial.print("Badge détecté - Données brutes (34 bits) : ");
+    Serial.println(uidHex);
+
+    return uidHex;
   }
-  Serial.println();
-  
-  wiegandData = 0;
-  bitCount = 0;
 }
