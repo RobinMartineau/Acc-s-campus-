@@ -13,12 +13,31 @@ sudo micro /etc/default/isc-dhcp-server
 
 sudo micro /etc/dhcp/dhcpd.conf
 (dans le fichier)
-subnet 192.168.248.0 netmask 255.255.248.0 {
-    range 192.168.248.101 192.168.250.254;
+#Vlan 10
+subnet 192.168.0.0 netmask 255.255.252.0 {
+    range 192.168.0.3 192.168.3.254;
     option domain-name-servers 8.8.8.8, 8.8.4.4;
     option domain-name "campus.local";
-    default-lease-time 86400; # 1 jour
-    max-lease-time 604800;    # 7 jours
+    default-lease-time 86400;
+    max-lease-time 604800;
+}
+
+#Vlan 20
+subnet 192.168.4.0 netmask 255.255.252.0 {
+    range 192.168.4.3 192.168.7.254;
+    option domain-name-servers 8.8.8.8, 8.8.4.4;
+    option domain-name "campus.local";
+    default-lease-time 86400;
+    max-lease-time 604800;
+}
+
+#Vlan 30
+subnet 192.168.30.0 netmask 255.255.255.0 {
+    range 192.168.30.10 192.168.30.254;
+    option domain-name-servers 8.8.8.8, 8.8.4.4;
+    option domain-name "campus.local";
+    default-lease-time 86400;
+    max-lease-time 604800;
 }
 
 //Activer le DHCP

@@ -61,10 +61,12 @@ copy running-config startup-config
 conf t
 interface vlan 10
 ip address 192.168.0.2 255.255.252.0
+ip helper-address 192.168.30.3
 no shutdown
 exit
 interface vlan 20
 ip address 192.168.4.2 255.255.252.0
+ip helper-address 192.168.30.3
 no shutdown
 exit
 interface vlan 30
