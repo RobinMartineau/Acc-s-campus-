@@ -1,7 +1,7 @@
 #include "pea.h"
 
-const byte rowPins[4] = {PB7, PB8, PB9, PB1};
-const byte colPins[4] = {PB3, PB4, PB5, PB6};
+const byte rowPins[4] = {PB7, PB8, PB9, PB10};
+const byte colPins[4] = {PB11, PB12, PB13, PB14};
 const char keys[16] = {
   '1','2','3','A',
   '4','5','6','B',
@@ -28,28 +28,40 @@ void setup() {
   pinMode(RELAY_PIN, OUTPUT);
   pinMode(D0_PIN, INPUT_PULLUP); 
   pinMode(D1_PIN, INPUT_PULLUP);
-  pinMode(BUTTON, INPUT);
-  pinMode(LED, OUTPUT);
-  
+  pinMode(WIEGAND34, OUTPUT);
   keypad.begin();
+  ILIInit();
   
-  //attachInterrupt(digitalPinToInterrupt(D0_PIN), D0Interrupt, FALLING);
-  //attachInterrupt(digitalPinToInterrupt(D1_PIN), D1Interrupt, FALLING);
-  //Serial.println("Lecture brute Wiegand en cours...");
+  attachInterrupt(digitalPinToInterrupt(D0_PIN), D0Interrupt, FALLING);
+  attachInterrupt(digitalPinToInterrupt(D1_PIN), D1Interrupt, FALLING);
+  Serial.println("Lecture brute Wiegand en cours...");
   
-  Ethernet.init(5);
-  IPAddress ip(192,168,252,3);
-  Serial.println("Starting ethernet");
-  Ethernet.begin(mac,ip);
+  //Ethernet.init(5);
+  //IPAddress ip(192,168,248,102);
+  //Ethernet.begin(mac,ip);
+  //digitalWrite(RELAY_PIN, LOW);
 
-  Serial.println(Ethernet.localIP());
+  //Serial.println(Ethernet.localIP());
   Serial.println("Fin du setup !");
+  verifySetup();
+  delay(1000);
+  //ethSetup();
+  //delay(2000);
+  askUser();
 }
 
 void loop() {
-    delay(1000);
-    Serial.println("Mot de passe :");
-    String pwd = keypad.password();
-    Serial.println(pwd);
- 
+  delay(5000);
+  // Tente de lire un badge (si la trame est complète et le timeout atteint)
+  String uidLu = "30E64AC4";
+
+  if (uidLu != "") {
+    // UID détecté, on l'envoie au serveur
+    String reponseServeur = sendHttpPost(uidLu);
+    
+    // Analyse de la réponse : ouvre la gâche si autorisé
+    actionResponse(reponseServeur);
+    Serial.println(Ethernet.localIP());
+  }
+  delay(30000);
 }
