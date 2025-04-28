@@ -82,3 +82,19 @@ unsigned long writeUID(String uid){
   tft.print("UID : ");
   tft.print(uid);
 }
+
+void afficherErreur(String message) {
+  tft.fillScreen(ILI9341_WHITE);
+  tft.setTextColor(ILI9341_RED);
+  tft.setTextSize(2);
+  tft.setCursor(20, 80);
+  tft.println(message);
+}
+
+void afficherMessage(String message) {
+  tft.fillScreen(ILI9341_WHITE);
+  tft.setTextColor(ILI9341_BLACK);
+  tft.setTextSize(2);
+  tft.setCursor(20, 80);
+  tft.println(message);
+}
