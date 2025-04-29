@@ -69,9 +69,11 @@ CREATE TABLE EDTSalle(
    HoraireFin TIMESTAMP NOT NULL,
    Cours VARCHAR(20),
    Id_Utilisateur INT,
+   Id_Classe SMALLINT,
    Id_Salle SMALLINT NOT NULL,
    PRIMARY KEY(Id),
    FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id),
    FOREIGN KEY(Id_Salle) REFERENCES Salle(Id)
 );
 
@@ -146,8 +148,10 @@ CREATE TABLE Reservation(
    Id_edtsalle INT NOT NULL,
    Id_Utilisateur INT NOT NULL,
    Id_Salle SMALLINT NOT NULL,
+   Id_Classe SMALLINT,
    PRIMARY KEY(Id),
    FOREIGN KEY(Id_edtsalle) REFERENCES EDTSalle(Id),
    FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
-   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id)
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id),
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id)
 );

@@ -19,7 +19,6 @@ sudo ufw allow out on lo #Loopback
 sudo ufw allow in 5432/tcp #pgAdmin
 sudo ufw allow out 5432/tcp #pgAdmin
 sudo ufw allow 67/udp #DHCP
-sudo ufw allow 68/udp #DHCP
 
 //Activer/Désactiver le parefeu
 sudo ufw enable
