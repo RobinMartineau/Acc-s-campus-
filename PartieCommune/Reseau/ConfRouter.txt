@@ -84,39 +84,59 @@ end
 copy running-config startup-config
 --> startup-config
 
-//Ajout de l'ACL ACCES_CAMPUS
+//Ajout de l'ACL ACCES_CAMPUS10
 conf t
-ip access-list extended ACCES_CAMPUS
-! Autoriser DHCP entre VLAN 30 et VLAN 10 et VLAN 20
-permit udp 192.168.30.0 0.0.0.255 192.168.0.0 0.0.3.255 eq 68
-permit udp 192.168.0.0 0.0.3.255 192.168.30.0 0.0.0.255 eq 67
-permit udp 192.168.4.0 0.0.3.255 192.168.30.0 0.0.0.255 eq 67
-permit udp 192.168.30.0 0.0.0.255 192.168.4.0 0.0.3.255 eq 68
-! Autoriser port 8000 (API) du VLAN 20 vers VLAN 30
-permit tcp 192.168.4.0 0.0.3.255 192.168.30.0 0.0.0.255 eq 8000
-! Autoriser tout le trafic du VLAN 30 vers VLAN 10 et VLAN 20
-permit ip 192.168.30.0 0.0.0.255 192.168.0.0 0.0.3.255
-permit ip 192.168.30.0 0.0.0.255 192.168.4.0 0.0.3.255
-! Bloquer tout le trafic du VLAN 10 vers VLAN 20
-deny ip 192.168.0.0 0.0.3.255 192.168.4.0 0.0.3.255
-! Bloquer tout le trafic du VLAN 10 vers VLAN 30
-deny ip 192.168.0.0 0.0.3.255 192.168.30.0 0.0.0.255
-! Bloquer tout le trafic du VLAN 20 vers VLAN 10
-deny ip 192.168.4.0 0.0.3.255 192.168.0.0 0.0.3.255
-! Bloquer tout le trafic du VLAN 20 vers VLAN 30, sauf port 8000
-deny ip 192.168.4.0 0.0.3.255 192.168.30.0 0.0.0.255
-! Permettre toutes les connexions autorisées dans les lignes précédentes
+no ip access-list extended ACCES_CAMPUS10
+ip access-list extended ACCES_CAMPUS10
+remark === DHCP ===
+permit udp any any eq bootps
+permit udp any any eq bootpc
+remark === Autoriser port web (3000) vers le serveur ===
+permit tcp any host 192.168.30.3 eq 3000
+end
+copy running-config startup-config
+--> startup-config
+
+//Ajout de l'ACL ACCES_CAMPUS20
+conf t
+no ip access-list extended ACCES_CAMPUS20
+ip access-list extended ACCES_CAMPUS20
+remark === DHCP ===
+permit udp any any eq bootps
+permit udp any any eq bootpc
+remark === Autoriser port API (8000) vers le serveur ===
+permit tcp any host 192.168.30.3 eq 8000
+end
+copy running-config startup-config
+--> startup-config
+
+//Ajout de l'ACL ACCES_CAMPUS30
+conf t
+no ip access-list extended ACCES_CAMPUS30
+ip access-list extended ACCES_CAMPUS30
 permit ip any any
 end
 copy running-config startup-config
 --> startup-config
 
-//Lier l'ACL avec l'interface fa0
+//Lier l'ACL avec l'interface fa0.10, fa0.20, fa0.30
 conf t
-interface fa0
-ip access-group ACCES_CAMPUS in
+interface fa0.10
+ip access-group ACCES_CAMPUS10 in
+exit
+interface fa0.20
+ip access-group ACCES_CAMPUS20 in
+exit
+interface fa0.30
+ip access-group ACCES_CAMPUS30 in
 end
 copy running-config startup-config
 --> startup-config
 
+//Supprimer un ACL
+conf t
+no ip access-list extended ACCES_CAMPUS
+end
+copy running-config startup-config
+--> startup-config
 
