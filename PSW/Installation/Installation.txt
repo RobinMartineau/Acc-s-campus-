@@ -116,10 +116,10 @@ kill -9 <PID>
 
 
 ###SITE###
-//Charger les fichiers nmp
+//Charger les fichiers npm
 npm i
 
-//Affiche la version (next@15.1.7)
+//Affiche la version
 npm list next
 
 //Lancer le site
@@ -139,7 +139,7 @@ module.exports = {
       name: 'express-site',
       script: 'npm',
       args: 'run dev',
-      cwd: '/home/user/SITE/PSW-main',
+      cwd: '/home/user/SITE/PSW',
       watch: true,
       env: {
         NODE_ENV: 'development',
