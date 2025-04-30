@@ -57,23 +57,9 @@ end
 copy running-config startup-config
 --> startup-config
 
-//Configuration des vlan 10, 20, 30, 99
-conf t
-interface vlan 10
-ip address 192.168.0.2 255.255.252.0
-ip helper-address 192.168.30.3
-no shutdown
-exit
-interface vlan 20
-ip address 192.168.4.2 255.255.252.0
-ip helper-address 192.168.30.3
-no shutdown
-exit
-interface vlan 30
-ip address 192.168.30.2 255.255.255.0
-no shutdown
-exit
+//Configuration du vlan 99
 interface vlan 99
+ip address 192.168.248.2 255.255.255.0
 no shutdown
 end
 copy running-config startup-config

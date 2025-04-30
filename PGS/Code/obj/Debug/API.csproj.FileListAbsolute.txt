@@ -1,0 +1,126 @@
+F:\PROJET\Nouveau dossier\API\bin\Debug\API.exe.config
+F:\PROJET\Nouveau dossier\API\bin\Debug\API.exe
+F:\PROJET\Nouveau dossier\API\bin\Debug\API.pdb
+F:\PROJET\Nouveau dossier\API\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\PCSC.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\PCSC.Iso7816.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Buffers.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.IO.Pipelines.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Memory.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Net.Http.Json.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Numerics.Vectors.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Text.Encodings.Web.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Text.Json.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Threading.Tasks.Extensions.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.ValueTuple.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+F:\PROJET\Nouveau dossier\API\bin\Debug\PCSC.pdb
+F:\PROJET\Nouveau dossier\API\bin\Debug\PCSC.Iso7816.pdb
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Buffers.xml
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.IO.Pipelines.xml
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Memory.xml
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Net.Http.Json.xml
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Numerics.Vectors.xml
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Text.Encodings.Web.xml
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Text.Json.xml
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.Threading.Tasks.Extensions.xml
+F:\PROJET\Nouveau dossier\API\bin\Debug\System.ValueTuple.xml
+F:\PROJET\Nouveau dossier\API\obj\Debug\API.csproj.AssemblyReference.cache
+F:\PROJET\Nouveau dossier\API\obj\Debug\API.Properties.Resources.resources
+F:\PROJET\Nouveau dossier\API\obj\Debug\GestionBadgesSalles.FrmGestionBadgesSalles.resources
+F:\PROJET\Nouveau dossier\API\obj\Debug\API.csproj.GenerateResource.cache
+F:\PROJET\Nouveau dossier\API\obj\Debug\API.csproj.CoreCompileInputs.cache
+F:\PROJET\Nouveau dossier\API\obj\Debug\API.csproj.Up2Date
+F:\PROJET\Nouveau dossier\API\obj\Debug\API.exe
+F:\PROJET\Nouveau dossier\API\obj\Debug\API.pdb
+F:\PROJET\Nouveau dossier\API\bin\Debug\Newtonsoft.Json.dll
+F:\PROJET\Nouveau dossier\API\bin\Debug\Newtonsoft.Json.xml
+F:\PROJET\Nouveau dossier\API\obj\Debug\GestionBadgesSalles.FrmListeUtilisateurs.resources
+F:\PROJET\Nouveau dossier\API\obj\Debug\GestionBadgesSalles.FormAssocierBadge.resources
+F:\PROJET\Nouveau dossier\API\obj\Debug\GestionBadgesSalles.FormAfficherUtilisateurs.resources
+E:\PROJET\Nouveau dossier\API\bin\Debug\API.exe.config
+E:\PROJET\Nouveau dossier\API\bin\Debug\API.exe
+E:\PROJET\Nouveau dossier\API\bin\Debug\API.pdb
+E:\PROJET\Nouveau dossier\API\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\Newtonsoft.Json.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\PCSC.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\PCSC.Iso7816.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Buffers.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.IO.Pipelines.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Memory.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Net.Http.Json.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Numerics.Vectors.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Text.Encodings.Web.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Text.Json.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Threading.Tasks.Extensions.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.ValueTuple.dll
+E:\PROJET\Nouveau dossier\API\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+E:\PROJET\Nouveau dossier\API\bin\Debug\Newtonsoft.Json.xml
+E:\PROJET\Nouveau dossier\API\bin\Debug\PCSC.pdb
+E:\PROJET\Nouveau dossier\API\bin\Debug\PCSC.Iso7816.pdb
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Buffers.xml
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.IO.Pipelines.xml
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Memory.xml
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Net.Http.Json.xml
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Numerics.Vectors.xml
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Text.Encodings.Web.xml
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Text.Json.xml
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.Threading.Tasks.Extensions.xml
+E:\PROJET\Nouveau dossier\API\bin\Debug\System.ValueTuple.xml
+E:\PROJET\Nouveau dossier\API\obj\Debug\API.csproj.AssemblyReference.cache
+E:\PROJET\Nouveau dossier\API\obj\Debug\GestionBadgesSalles.FormAfficherUtilisateurs.resources
+E:\PROJET\Nouveau dossier\API\obj\Debug\GestionBadgesSalles.FormAssocierBadge.resources
+E:\PROJET\Nouveau dossier\API\obj\Debug\GestionBadgesSalles.FrmListeUtilisateurs.resources
+E:\PROJET\Nouveau dossier\API\obj\Debug\API.Properties.Resources.resources
+E:\PROJET\Nouveau dossier\API\obj\Debug\GestionBadgesSalles.FrmGestionBadgesSalles.resources
+E:\PROJET\Nouveau dossier\API\obj\Debug\API.csproj.GenerateResource.cache
+E:\PROJET\Nouveau dossier\API\obj\Debug\API.csproj.CoreCompileInputs.cache
+E:\PROJET\Nouveau dossier\API\obj\Debug\API.csproj.Up2Date
+E:\PROJET\Nouveau dossier\API\obj\Debug\API.exe
+E:\PROJET\Nouveau dossier\API\obj\Debug\API.pdb
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\API.exe.config
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\API.exe
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\API.pdb
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\Newtonsoft.Json.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\PCSC.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\PCSC.Iso7816.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Buffers.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.IO.Pipelines.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Memory.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Net.Http.Json.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Text.Encodings.Web.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Text.Json.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.ValueTuple.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\Newtonsoft.Json.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\PCSC.pdb
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\PCSC.Iso7816.pdb
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Buffers.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.IO.Pipelines.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Memory.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Net.Http.Json.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Text.Encodings.Web.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Text.Json.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.ValueTuple.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.csproj.AssemblyReference.cache
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\GestionBadgesSalles.FormAfficherUtilisateurs.resources
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\GestionBadgesSalles.FormAssocierBadge.resources
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\GestionBadgesSalles.FrmListeUtilisateurs.resources
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.Properties.Resources.resources
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\GestionBadgesSalles.FrmGestionBadgesSalles.resources
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.csproj.GenerateResource.cache
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.csproj.CoreCompileInputs.cache
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.csproj.Up2Date
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.exe
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.pdb
