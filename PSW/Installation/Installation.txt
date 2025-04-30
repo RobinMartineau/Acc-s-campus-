@@ -29,6 +29,9 @@ python3 -m venv BDD
 //Activer l'environnement
 source BDD/bin/activate
 
+//Désactiver l'environnement
+deactivate
+
 //Installer Python
 sudo apt install -y python3 python3-pip
 
