@@ -82,3 +82,45 @@ E:\PROJET\Nouveau dossier\API\obj\Debug\API.csproj.CoreCompileInputs.cache
 E:\PROJET\Nouveau dossier\API\obj\Debug\API.csproj.Up2Date
 E:\PROJET\Nouveau dossier\API\obj\Debug\API.exe
 E:\PROJET\Nouveau dossier\API\obj\Debug\API.pdb
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\API.exe.config
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\API.exe
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\API.pdb
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\Newtonsoft.Json.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\PCSC.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\PCSC.Iso7816.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Buffers.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.IO.Pipelines.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Memory.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Net.Http.Json.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Text.Encodings.Web.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Text.Json.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.ValueTuple.dll
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\Newtonsoft.Json.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\PCSC.pdb
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\PCSC.Iso7816.pdb
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Buffers.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.IO.Pipelines.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Memory.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Net.Http.Json.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Text.Encodings.Web.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Text.Json.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\bin\Debug\System.ValueTuple.xml
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.csproj.AssemblyReference.cache
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\GestionBadgesSalles.FormAfficherUtilisateurs.resources
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\GestionBadgesSalles.FormAssocierBadge.resources
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\GestionBadgesSalles.FrmListeUtilisateurs.resources
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.Properties.Resources.resources
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\GestionBadgesSalles.FrmGestionBadgesSalles.resources
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.csproj.GenerateResource.cache
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.csproj.CoreCompileInputs.cache
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.csproj.Up2Date
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.exe
+C:\Users\lopti\Documents\Projet\PGS\Code\obj\Debug\API.pdb
