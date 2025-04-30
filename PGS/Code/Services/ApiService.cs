@@ -20,7 +20,7 @@ namespace GestionBadgesSalles.Services
         // 🔹 Ajouter un badge
         public static async Task<bool> AjouterBadge(string uid, int utilisateurId)
         {
-            string url = "http://172.20.0.12:8000/badge/";
+            string url = "http://192.168.30.3:8000/badge/";
 
             var badgeData = new
             {
@@ -51,7 +51,7 @@ namespace GestionBadgesSalles.Services
         // 🔹 Supprimer un badge
         public static async Task<bool> DeleteBadgeAsync(string uid)
         {
-            string url = $"http://172.20.0.12:8000/badge/{uid}";
+            string url = $"http://192.168.30.3:8000/badge/{uid}";
 
             try
             {
@@ -68,7 +68,7 @@ namespace GestionBadgesSalles.Services
         // 🔹 Modifier l'état actif/inactif d'un badge
         public static async Task<bool> ModifierEtatBadgeAsync(string uid, bool isActive)
         {
-            string url = $"http://172.20.0.12:8000/badge/{uid}";
+            string url = $"http://192.168.30.3:8000/badge/{uid}";
 
             var updateData = new
             {
@@ -90,7 +90,7 @@ namespace GestionBadgesSalles.Services
         // 🔹 Récupérer la liste des utilisateurs
         public static async Task<List<Utilisateur>> GetUtilisateursAsync()
         {
-            string url = "http://172.20.0.12:8000/pgs/utilisateur";
+            string url = "http://192.168.30.3:8000/pgs/utilisateur";
 
             try
             {
@@ -117,7 +117,7 @@ namespace GestionBadgesSalles.Services
         // 🔹 Récupérer la liste des salles
         public static async Task<List<Salle>> RecupererSallesAsync()
         {
-            string url = "http://172.20.0.12:8000/salles";
+            string url = "http://192.168.30.3:8000/salles";
 
             try
             {
@@ -138,7 +138,7 @@ namespace GestionBadgesSalles.Services
         // 🔹 Associer un badge à un utilisateur (PUT avec JSON)
         public static async Task<bool> AssocierBadgeAUtilisateur(int utilisateurId, string uidBadge)
         {
-            string url = $"http://172.20.0.12:8000/pgs/associer/utilisateur/{utilisateurId}/badge/{uidBadge}";
+            string url = $"http://192.168.30.3:8000/pgs/associer/utilisateur/{utilisateurId}/badge/{uidBadge}";
 
             var associerData = new
             {
@@ -161,7 +161,7 @@ namespace GestionBadgesSalles.Services
         // 🔹 Désassocier un badge d'un utilisateur (PUT avec JSON)
         public static async Task<bool> DesassocierBadgeDUtilisateur(string uid, int utilisateurId)
         {
-            string url = $"http://172.20.0.12:8000/pgs/dissocier/utilisateur/{utilisateurId}/badge/{uid}";
+            string url = $"http://192.168.30.3:8000/pgs/dissocier/utilisateur/{utilisateurId}/badge/{uid}";
 
             var desassocierData = new
             {
@@ -195,7 +195,7 @@ namespace GestionBadgesSalles.Services
         // 🔹 Récupérer tous les badges
         public static async Task<List<Badge>> GetBadgesFromApiAsync()
         {
-            string url = "http://172.20.0.12:8000/badge/";
+            string url = "http://192.168.30.3:8000/badge/";
 
             try
             {
