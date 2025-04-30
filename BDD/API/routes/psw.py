@@ -51,7 +51,7 @@ def get_db():
                 }
             }
         }
-    }, 
+    },
 tags=["PSW"])
 def login(request: schemas.LoginRequest, db: Session = Depends(get_db)):
     utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.identifiant == request.identifiant).first()
@@ -65,11 +65,11 @@ def login(request: schemas.LoginRequest, db: Session = Depends(get_db)):
 
     if mot_de_passe != request.mot_de_passe:
         raise HTTPException(status_code = 401, detail = "Mot de passe incorrect")
-        
+
     return {
             "success": True,
             "id_utilisateur": utilisateur.id,
-            "role": utilisateur.role     
+            "role": utilisateur.role
         }
 
 #Route GET pour récupérer les absences vérifer d'un utilisateur
@@ -100,11 +100,11 @@ def login(request: schemas.LoginRequest, db: Session = Depends(get_db)):
                 }
             }
         }
-    }, 
+    },
 tags=["PSW"])
-def getUAbsence(id_utilisateur: int, db: Session = Depends(get_db)):  
+def getUAbsence(id_utilisateur: int, db: Session = Depends(get_db)):
     heure_actuelle = datetime.datetime.now()
-    
+
     #Récupération de tous les cours passé
     cours_passe = db.query(models.EDTUtilisateur).filter(
         models.EDTUtilisateur.id_utilisateur == id_utilisateur,
@@ -112,7 +112,7 @@ def getUAbsence(id_utilisateur: int, db: Session = Depends(get_db)):
     ).all()
 
     id_cours = [cours.id for cours in cours_passe]
-    
+
     #Récupération des absences liées au cours
     absences = db.query(models.Absence).filter(
         models.Absence.id_edtutilisateur.in_(id_cours),
@@ -158,7 +158,7 @@ def getUAbsence(id_utilisateur: int, db: Session = Depends(get_db)):
                 }
             }
         }
-    }, 
+    },
 tags=["PSW"])
 def getURetard(id_utilisateur: int, db: Session = Depends(get_db)):
     heure_actuelle = datetime.datetime.now()
@@ -170,8 +170,8 @@ def getURetard(id_utilisateur: int, db: Session = Depends(get_db)):
     ).all()
 
     id_cours = [cours.id for cours in cours_passe]
-    
-    #Récupération des retards liées au cours    
+
+    #Récupération des retards liées au cours
     retards = db.query(models.Retard).filter(
         models.Retard.id_edtutilisateur.in_(id_cours),
     ).all()
@@ -224,7 +224,7 @@ def getURetard(id_utilisateur: int, db: Session = Depends(get_db)):
                 }
             }
         }
-    }, 
+    },
 tags=["PSW"])
 def getEleve(db: Session = Depends(get_db)):
     eleve = db.query(models.Utilisateur).filter(
@@ -232,17 +232,17 @@ def getEleve(db: Session = Depends(get_db)):
     ).all()
 
     if not eleve:
-        raise HTTPException(status_code = 404, detail = "Élèves non trouvés")        
+        raise HTTPException(status_code = 404, detail = "Élèves non trouvés")
 
     id_classe = [utilisateur.id_classe for utilisateur in eleve]
-    
+
     classe = db.query(models.Classe).filter(
             models.Classe.id.in_(id_classe)
         ).all()
 
     if not classe:
         raise HTTPException(status_code = 404, detail = "Classes non trouvées")
- 
+
     classes_dict = {c.id: c.nom for c in classe}
 
     return [
@@ -309,10 +309,6 @@ def getEleve(db: Session = Depends(get_db)):
                             "summary": "ID de salle invalide",
                             "value": {"detail": "Salle non trouvée"}
                         },
-                        "Aucune réservation": {
-                            "summary": "Aucun cours enregistré dans cette salle",
-                            "value": {"detail": "Aucune réservation trouvée pour cette salle"}
-                        },
                         "Réservation sans utilisateur": {
                             "summary": "Erreur de données",
                             "value": {"detail": "Réservation sans utilisateur associée (ID réservation 23)"}
@@ -355,28 +351,28 @@ def activiteSalle(id_salle: int, db: Session = Depends(get_db)):
     edtsalle = db.query(models.EDTSalle).filter(
         models.EDTSalle.id_salle == id_salle
         ).all()
-    if not edtsalle:
-        raise HTTPException(status_code=404, detail="Aucune réservation trouvée pour cette salle")
 
     reservations = []
-    for res in edtsalle:
-        if not res.id_utilisateur:
-            raise HTTPException(status_code=404, detail=f"Réservation sans utilisateur associée")
 
-        utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == res.id_utilisateur).first()
-        if not utilisateur:
-            raise HTTPException(status_code=404, detail=f"Utilisateur introuvable pour une réservation")
+    if edtsalle:
+        for res in edtsalle:
+            if not res.id_utilisateur:
+                raise HTTPException(status_code=404, detail=f"Réservation sans utilisateur associée")
 
-        reservations.append({
-            "horairedebut": res.horairedebut,
-            "horairefin": res.horairefin,
-            "cours": res.cours,
-            "utilisateur": {
-                "id": utilisateur.id,
-                "nom": utilisateur.nom,
-                "prenom": utilisateur.prenom
-            }
-        })
+            utilisateur = db.query(models.Utilisateur).filter(models.Utilisateur.id == res.id_utilisateur).first()
+            if not utilisateur:
+                raise HTTPException(status_code=404, detail=f"Utilisateur introuvable pour une réservation")
+
+            reservations.append({
+                "horairedebut": res.horairedebut,
+                "horairefin": res.horairefin,
+                "cours": res.cours,
+                "utilisateur": {
+                    "id": utilisateur.id,
+                    "nom": utilisateur.nom,
+                    "prenom": utilisateur.prenom
+                }
+            })
 
     #Logs de badge dans l'heure passée
     il_y_a_une_heure = datetime.datetime.now() - datetime.timedelta(hours=1)
@@ -403,25 +399,24 @@ def activiteSalle(id_salle: int, db: Session = Depends(get_db)):
     )
 
     utilisateurs_derniere_heure = []
-    
-    for log in logs_recents:
-        badge = db.query(models.Badge).filter(models.Badge.uid == log.uid).first()
-        if badge is None:
-            raise HTTPException(status_code=404, detail="Badge non trouvé.")
-        
-        if badge.id_utilisateur is None:
-            raise HTTPException(status_code=404, detail="Badge non associé à un utilisateur.")
-        
-        utilisateur_badge = db.query(models.Utilisateur).filter(models.Utilisateur.id == badge.id_utilisateur).first()
-        if utilisateur_badge is None:
-            raise HTTPException(status_code=404, detail="Utilisateur du badge non trouvé.")
 
-        utilisateurs_derniere_heure.append(utilisateur_badge)
+    if logs_recents:
+        for log in logs_recents:
+            badge = db.query(models.Badge).filter(models.Badge.uid == log.uid).first()
+            if badge is None:
+                raise HTTPException(status_code=404, detail="Badge non trouvé.")
+
+            if badge.id_utilisateur is None:
+                raise HTTPException(status_code=404, detail="Badge non associé à un utilisateur.")
+
+            utilisateur_badge = db.query(models.Utilisateur).filter(models.Utilisateur.id == badge.id_utilisateur).first()
+            if utilisateur_badge is None:
+                raise HTTPException(status_code=404, detail="Utilisateur du badge non trouvé.")
+
+            utilisateurs_derniere_heure.append(utilisateur_badge)
 
     return {
         "reservations": reservations,
         "utilisateurs_derniere_heure": utilisateurs_derniere_heure,
         "nombre_utilisateurs": len(utilisateurs_derniere_heure)
     }
-
-
