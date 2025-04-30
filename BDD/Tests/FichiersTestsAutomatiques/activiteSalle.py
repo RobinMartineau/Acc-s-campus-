@@ -25,9 +25,9 @@ class MockUtilisateur:
         self.prenom = prenom
 
 class MockLog:
-    def __init__(self, id=1, id_badge="12345678", horaire=None):
+    def __init__(self, id=1, uid="12345678", horaire=None):
         self.id = id
-        self.id_badge = id_badge
+        self.uid = uid
         if horaire:
             self.horaire = horaire
         else:
