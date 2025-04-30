@@ -405,7 +405,7 @@ def activiteSalle(id_salle: int, db: Session = Depends(get_db)):
     utilisateurs_derniere_heure = []
     
     for log in logs_recents:
-        badge = db.query(models.Badge).filter(models.Badge.uid == log.id_badge).first()
+        badge = db.query(models.Badge).filter(models.Badge.uid == log.uid).first()
         if badge is None:
             raise HTTPException(status_code=404, detail="Badge non trouvé.")
         
