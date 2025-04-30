@@ -1,0 +1,24 @@
+nom , prénom (seule chose obligatoire , peut pas sauvegarder si prénom pas mis , mais sans les autres on peut) , datte de naissance ,rôle = menu déroulant ( soit invité , élève, prof , admin , personnel) , L ' ID de la classe 
+
+le but ; quand j'appuis sur créer un utilisateur e une petite fenetre souvre avec plusieurs chose a rensigner comme 
+, le nom 
+, le prenom 
+, la datte de naissance 
+, l'id de la classe 
+, le role
+
+une fois tout ca remplis je click sur sauvgarder et l'utilisateur est creéer 
+apres je click sur créer un badges et j'associe le badges a l'utilisateur 
+requette http en post et get
+
+il faut maintenat que quand je remplis toute les données de l utilisateur par exmple ca envoie des requettes 
+badge actif renvoie une valeur true , badge inactif renvoie une valeur false 
+il faudrait que les badges dans la liste soit trier par date de création
+
+parfait ca marche maintenant j'ai ca comme route : http://172.20.0.39:8000/pgs/associer/utilisateur/{id_utilisateur}/badge/{uid_badge} avec comme requette GET , je dois récuperer la liste des utilisateur de l'API
+
+
+
+contexte , presenter un plans , sheéma réseaux pour se repérer , expliquer les liens , les adresse ip, les sécurité , on scénarise la démonstration , demonstration courte , symsl uml , diagramme de séquence , scénarios , diagramme de classes
+
+, je le met dans mon frmgestionbadgessalles.cs ?
