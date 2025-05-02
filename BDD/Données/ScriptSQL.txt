@@ -1,5 +1,4 @@
 CREATE TYPE role AS ENUM ('Invite', 'Personnel', 'Eleve', 'Prof', 'Admin');
-
 CREATE TYPE type AS ENUM ('BAE', 'PEA');
 
 CREATE TABLE Salle(
@@ -24,7 +23,7 @@ CREATE TABLE Equipement(
    Id_Salle SMALLINT NOT NULL,
    PRIMARY KEY(id),
    UNIQUE(Adresse_mac),
-   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id)
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id) ON DELETE CASCADE
 );
 
 CREATE TABLE Utilisateur(
@@ -40,7 +39,7 @@ CREATE TABLE Utilisateur(
    PRIMARY KEY(id),
    UNIQUE(Mot_de_passe),
    UNIQUE(Identifiant),
-   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id)
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id) ON DELETE CASCADE
 );
 
 CREATE TABLE Badge(
@@ -50,7 +49,7 @@ CREATE TABLE Badge(
    Id_Utilisateur INT,
    PRIMARY KEY(UID),
    UNIQUE(Id_Utilisateur),
-   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id)
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id) ON DELETE CASCADE
 );
 
 CREATE TABLE Log(
@@ -59,8 +58,8 @@ CREATE TABLE Log(
    Id_Equipement INT NOT NULL,
    UID CHAR(10) NOT NULL,
    PRIMARY KEY(Id),
-   FOREIGN KEY(Id_Equipement) REFERENCES Equipement(Id),
-   FOREIGN KEY(UID) REFERENCES Badge(UID)
+   FOREIGN KEY(Id_Equipement) REFERENCES Equipement(Id) ON DELETE CASCADE,
+   FOREIGN KEY(UID) REFERENCES Badge(UID) ON DELETE CASCADE
 );
 
 CREATE TABLE EDTSalle(
@@ -72,9 +71,9 @@ CREATE TABLE EDTSalle(
    Id_Classe SMALLINT,
    Id_Salle SMALLINT NOT NULL,
    PRIMARY KEY(Id),
-   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
-   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id),
-   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id)
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id) ON DELETE CASCADE
 );
 
 CREATE TABLE EDTUtilisateur(
@@ -86,9 +85,9 @@ CREATE TABLE EDTUtilisateur(
    Id_Classe SMALLINT,
    Id_Utilisateur INT NOT NULL,
    PRIMARY KEY(Id),
-   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id),
-   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id),
-   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id)
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id) ON DELETE CASCADE
 );
 
 CREATE TABLE Absence(
@@ -100,8 +99,8 @@ CREATE TABLE Absence(
    Id_EDTUtilisateur INT NOT NULL,
    UNIQUE (Id_EDTUtilisateur),
    PRIMARY KEY(Id),
-   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
-   FOREIGN KEY(Id_EDTUtilisateur) REFERENCES EDTUtilisateur(Id)
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_EDTUtilisateur) REFERENCES EDTUtilisateur(Id) ON DELETE CASCADE
 );
 
 CREATE TABLE Retard(
@@ -113,8 +112,8 @@ CREATE TABLE Retard(
    Id_EDTUtilisateur INT NOT NULL,
    UNIQUE (Id_EDTUtilisateur),
    PRIMARY KEY(Id),
-   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
-   FOREIGN KEY(Id_EDTUtilisateur) REFERENCES EDTUtilisateur(Id)
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_EDTUtilisateur) REFERENCES EDTUtilisateur(Id) ON DELETE CASCADE
 );
 
 CREATE TABLE EDTClasse(
@@ -126,9 +125,9 @@ CREATE TABLE EDTClasse(
    Id_Salle SMALLINT NOT NULL,
    Id_Classe SMALLINT NOT NULL,
    PRIMARY KEY(Id),
-   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
-   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id),
-   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id)
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id) ON DELETE CASCADE
 );
 
 CREATE TABLE Autorisation(
@@ -137,8 +136,8 @@ CREATE TABLE Autorisation(
    Id_Utilisateur INT NOT NULL,
    Id_Salle SMALLINT NOT NULL,
    PRIMARY KEY(Id),
-   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
-   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id)
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id) ON DELETE CASCADE
 );
 
 CREATE TABLE Reservation(
@@ -150,8 +149,8 @@ CREATE TABLE Reservation(
    Id_Salle SMALLINT NOT NULL,
    Id_Classe SMALLINT,
    PRIMARY KEY(Id),
-   FOREIGN KEY(Id_edtsalle) REFERENCES EDTSalle(Id),
-   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id),
-   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id),
-   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id)
+   FOREIGN KEY(Id_edtsalle) REFERENCES EDTSalle(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id) ON DELETE CASCADE,
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id) ON DELETE CASCADE
 );
