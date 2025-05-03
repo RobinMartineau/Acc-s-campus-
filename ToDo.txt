@@ -1,0 +1,9 @@
+- Changer l'adresse ip du PSW pour 192.168.248.3
+- Faire les nouvelles routes pour l'increment 2 !!!
+- Ajouter les VLAN sur le switch
+- Configurer le router
+- Configurer les tokens pour l'api !!!
+- Faire les diagrammes d'objet (optionnel)
+- Mettre à jour le dossier perso
+- Uniformisé les fichiers pytest (optionnel)
+- Séparé le site et la base de données sur le psw
