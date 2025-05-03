@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from routes import utilisateur, autorisation, badge, salle, classe, equipement, edt, pea, bae, pgs, psw
+from routes import utilisateur, autorisation, badge, salle, classe, equipement, edt, pea, bae, pgs, psw, reservation
 import ipaddress
 
 app = FastAPI(
@@ -41,6 +41,7 @@ async def ip_filter_middleware(request: Request, call_next):
 
         # Définir les sous-réseaux autorisés
         allowed_networks = [
+	    ipaddress.ip_network('172.20.0.0/16'), #Baronnerie
             ipaddress.ip_network('192.168.4.0/22'), #VLAN 20
             ipaddress.ip_network('192.168.30.2/32'), #PGS
             ipaddress.ip_network('127.0.0.1/32'), #Localhost
@@ -67,6 +68,7 @@ app.include_router(pea.router)
 app.include_router(bae.router)
 app.include_router(pgs.router)
 app.include_router(psw.router)
+app.include_router(reservation.router)
 
 #Autorisation
 app.add_middleware(
