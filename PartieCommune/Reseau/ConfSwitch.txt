@@ -43,10 +43,10 @@ ssh -oHostKeyAlgorithms=+ssh-rsa -oKexAlgorithms=+diffie-hellman-group1-sha1 -oC
 //Ajout vlan
 conf t
 vlan 10
-name Publique
+name Pedagogique
 exit
 vlan 20
-name Badge
+name Acces
 exit
 vlan 30
 name Administration
