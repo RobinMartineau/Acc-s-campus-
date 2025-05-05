@@ -127,23 +127,23 @@ def verifierAccesBadge(request: schemas.AccesRequestB, db: Session = Depends(get
     #Vérifier si le badge est désactivé
     if not badge.actif:
         raise HTTPException(status_code = 403, detail = "Accès refusé : Veuillez rapporter le badge à un membre de la vie scolaire.")
-
+        
     #Trouver la salle correspondant à la PEA
-    if not equipement or not equipement.id_salle:
-        raise HTTPException(status_code = 404, detail = "Salle non trouvée")
+    salle = db.query(models.Salle).filter(models.Salle.id == equipement.id_salle).first()
 
-    id_salle = equipement.id_salle
+    if not salle:
+        raise HTTPException(status_code = 404, detail = "Salle non trouvée")
 
     #Vérifier si une autorisation existe pour cet utilisateur dans cette salle
     autorisation = db.query(models.Autorisation).filter(
         models.Autorisation.id_utilisateur == utilisateur.id,
-        models.Autorisation.id_salle == id_salle
+        models.Autorisation.id_salle == salle.id
     ).first()
 
     #Vérifier s'il a un cours en ce moment dans EDTUtilisateur
     cours = db.query(models.EDTUtilisateur).filter(
         models.EDTUtilisateur.id_utilisateur == utilisateur.id,
-        models.EDTUtilisateur.id_salle == id_salle,
+        models.EDTUtilisateur.id_salle == salle.id,
         models.EDTUtilisateur.horairedebut <= heure_actuelle,
         models.EDTUtilisateur.horairefin >= heure_actuelle
     ).first()
@@ -279,21 +279,21 @@ def verifierAccesDigicode(request: schemas.AccesRequestD, db: Session = Depends(
         raise HTTPException(status_code = 403, detail = "Accès refusé : Badge désactivé.")
 
     #Trouver la salle correspondant à la PEA
-    if not equipement or not equipement.id_salle:
-        raise HTTPException(status_code = 404, detail = "Salle non trouvée")
+    salle = db.query(models.Salle).filter(models.Salle.id == equipement.id_salle).first()
 
-    id_salle = equipement.id_salle
+    if not salle:
+        raise HTTPException(status_code = 404, detail = "Salle non trouvée")
 
     #Vérifier si une autorisation existe pour cet utilisateur dans cette salle
     autorisation = db.query(models.Autorisation).filter(
         models.Autorisation.id_utilisateur == utilisateur.id,
-        models.Autorisation.id_salle == id_salle
+        models.Autorisation.id_salle == salle.id
     ).first()
 
     #Vérifier s'il a un cours en ce moment dans EDTUtilisateur
     cours = db.query(models.EDTUtilisateur).filter(
         models.EDTUtilisateur.id_utilisateur == utilisateur.id,
-        models.EDTUtilisateur.id_salle == id_salle,
+        models.EDTUtilisateur.id_salle == salle.id,
         models.EDTUtilisateur.horairedebut <= heure_actuelle,
         models.EDTUtilisateur.horairefin >= heure_actuelle
     ).first()
