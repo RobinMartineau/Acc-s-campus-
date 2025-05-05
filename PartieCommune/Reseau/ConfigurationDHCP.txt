@@ -17,7 +17,7 @@ sudo micro /etc/dhcp/dhcpd.conf
 subnet 192.168.0.0 netmask 255.255.252.0 {
     range 192.168.0.2 192.168.3.254;
     option routers 192.168.0.1;
-    option domain-name-servers 8.8.8.8, 8.8.4.4;
+    option domain-name-servers 192.168.30.3;
     option domain-name "campus.local";
     default-lease-time 86400;
     max-lease-time 604800;
@@ -27,7 +27,7 @@ subnet 192.168.0.0 netmask 255.255.252.0 {
 subnet 192.168.4.0 netmask 255.255.252.0 {
     range 192.168.4.2 192.168.7.254;
     option routers 192.168.4.1;
-    option domain-name-servers 8.8.8.8, 8.8.4.4;
+    option domain-name-servers 192.168.30.3;
     option domain-name "campus.local";
     default-lease-time 86400;
     max-lease-time 604800;
@@ -37,7 +37,7 @@ subnet 192.168.4.0 netmask 255.255.252.0 {
 subnet 192.168.30.0 netmask 255.255.255.0 {
     range 192.168.30.10 192.168.30.254;
     option routers 192.168.30.1;
-    option domain-name-servers 8.8.8.8, 8.8.4.4;
+    option domain-name-servers 192.168.30.3;
     option domain-name "campus.local";
     default-lease-time 86400;
     max-lease-time 604800;

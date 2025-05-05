@@ -91,6 +91,13 @@ ip access-list extended ACCES_CAMPUS10
 remark === DHCP ===
 permit udp any any eq bootps
 permit udp any any eq bootpc
+remark === DNS (UDP & TCP 53) vers le serveur DNS ===
+permit udp any host 192.168.30.3 eq 53
+permit tcp any host 192.168.30.3 eq 53
+remark === Autoriser HTTP (port 80) vers le serveur ===
+permit tcp any host 192.168.30.3 eq 80
+remark === Autoriser HTTPS (port 443) vers le serveur ===
+permit tcp any host 192.168.30.3 eq 443
 remark === Autoriser port web (3000) vers le serveur ===
 permit tcp any host 192.168.30.3 eq 3000
 end
@@ -104,6 +111,13 @@ ip access-list extended ACCES_CAMPUS20
 remark === DHCP ===
 permit udp any any eq bootps
 permit udp any any eq bootpc
+remark === DNS (UDP & TCP 53) vers le serveur DNS ===
+permit udp any host 192.168.30.3 eq 53
+permit tcp any host 192.168.30.3 eq 53
+remark === Autoriser HTTP (port 80) vers le serveur ===
+permit tcp any host 192.168.30.3 eq 80
+remark === Autoriser HTTPS (port 443) vers le serveur ===
+permit tcp any host 192.168.30.3 eq 443
 remark === Autoriser port API (8000) vers le serveur ===
 permit tcp any host 192.168.30.3 eq 8000
 end
