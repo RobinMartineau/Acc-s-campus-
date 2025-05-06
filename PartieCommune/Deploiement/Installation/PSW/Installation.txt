@@ -51,6 +51,7 @@ pip install python-dotenv
 su - 
 apt install nodejs npm -y
 
+
 ###PM2###
 //Installation de pm2
 sudo npm install -g pm2
