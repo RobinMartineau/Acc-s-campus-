@@ -1,6 +1,10 @@
 # Acc-s-campus-
 Projet de fin d'année de BTS
 
+Il existe 4 branches différentes, Increment1, Increment2, Increment3 ainsi que main. Chaque IncrementN regroupe un petit groupe d'incrément. L'ordre des push se fait comme suivant:
+Increment1 -> Increment2 -> Increment3 -> main.
+Le projet est donc récupérable dans son entièreté dans la branche main.
+
 Le repertoire GitHub est organisé de la sorte:
   - BAE --> Tout le travail en lien la BAE. Cette partie est réalisé par Léo Gillier.
   - BDD --> Tout le travail en lien avec la gestion des données et l'API rest. Cette partie est réalisé par Lorick Fouquet.
