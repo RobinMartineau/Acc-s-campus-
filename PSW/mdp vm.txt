@@ -1,6 +1,0 @@
-PSW:
-user BTS2425
-root root
-
-Base de donnée:
-postgres BTS2425
