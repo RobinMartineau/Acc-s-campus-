@@ -3,6 +3,7 @@
 ###OS###
 //Installation classique Debian 12
 
+
 ###EDITEUR DE TEXTE###
 //Installer micro
 sudo apt install micro -y
@@ -50,6 +51,21 @@ pip install python-dotenv
 //Installation de nodejs npm
 su - 
 apt install nodejs npm -y
+
+
+###IMPORT DES FICHIERS API###
+//Récupérer les fichiers dans le repertoire BDD/API sur notre dépot GitHub
+//Les coller dans un repertoire vide sur le PSW
+
+
+###IMPORT DES FICHIERS SITE###
+//Récupérer les fichiers dans le repertoire PSW sur notre dépot GitHub
+//Les importer dans le répertoire souhaité
+
+
+###CHARGER LES FICHIERS DU SITE  
+npm i 
+
 
 ###PM2###
 //Installation de pm2
