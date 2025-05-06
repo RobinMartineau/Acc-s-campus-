@@ -4,4 +4,5 @@ Organisation répertoire PSW :
 - PSW_V1 --> Version 1 du site PSW
 - PSW_V2 --> Version 2 du site PSW
 - PSW_V3 --> Version 3 du site PSW
+- PSW_V4 --> Version 4 du site PSW
 - Test --> Test d'intégration et test unitaire du site PSW
