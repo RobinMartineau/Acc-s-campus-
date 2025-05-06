@@ -1,3 +1,8 @@
+-- DOCUMENT REALISE PAR LORICK FOUQUET --
+
+CREATE DATABASE campus_db;
+\c campus_db
+
 CREATE TYPE role AS ENUM ('Invite', 'Personnel', 'Eleve', 'Prof', 'Admin');
 CREATE TYPE type AS ENUM ('BAE', 'PEA');
 

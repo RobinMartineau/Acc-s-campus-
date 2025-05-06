@@ -1,4 +1,7 @@
-DEBIAN12
+-- DOCUMENT REALISE PAR LORICK FOUQUET --
+
+###OS###
+//Installation classique Debian 12
 
 ###EDITEUR DE TEXTE###
 //Installer micro
@@ -17,6 +20,8 @@ sudo systemctl enable postgresql
 //Se connecter à PostgreSQL
 sudo su - postgres
 psql
+
+//Copier le script SQL puis quitter postgreSQL
 
 
 ###PYTHON###
@@ -50,85 +55,6 @@ su -
 apt install nodejs npm -y
 
 
-###PAREFEU###
-//Installation ufw
-sudo apt install ufw -y
-
-//Bloquer toutes les entrées et sorties
-sudo ufw default deny incoming
-sudo ufw default deny outgoing
-
-//Autoriser les ports nécessaire
-sudo ufw allow in 8000/tcp #FastAPI
-sudo ufw allow in 3000/tcp #NPM
-sudo ufw allow in 22/tcp #SSH
-sudo ufw allow out 53/tcp #DNS tcp
-sudo ufw allow out 53/udp #DNS udp
-sudo ufw allow out 80/tcp #HTTP
-sudo ufw allow out 443/tcp #HTTPS
-sudo ufw allow in on lo #Loopback
-sudo ufw allow out on lo #Loopback
-sudo ufw allow in 5432/tcp #pgAdmin
-sudo ufw allow out 5432/tcp #pgAdmin
-
-//Activer/Désactiver le parefeu
-sudo ufw enable
-sudo ufw disable
-
-//Vérifer le statut du parefeu
-sudo ufw status verbose
-
-
-###DHCP###
-//Installer isc-dhcp-server
-sudo apt update
-sudo apt install isc-dhcp-server -y
-
-//Configuration
-sudo micro /etc/default/isc-dhcp-server
-(dans le fichier)
-	INTERFACESv4="eno1"
-
-sudo micro /etc/dhcp/dhcpd.conf
-(dans le fichier)
-subnet 192.168.248.0 netmask 255.255.248.0 {
-    range 192.168.248.101 192.168.250.254;
-    option domain-name-servers 8.8.8.8, 8.8.4.4;
-    option domain-name "";
-    default-lease-time 86400; # 1 jour
-    max-lease-time 604800;    # 7 jours
-}
-
-//Activer le DHCP
-sudo systemctl restart isc-dhcp-server
-sudo systemctl enable isc-dhcp-server
-
-
-###API###
-//Lancer l'API
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-
-//Trouver le processus uvicorn
-ps aux | grep uvicorn
-
-//Trouver le processus sur le port 8000
-sudo lsof -i :8000
-
-//Tuer un processus
-kill -9 <PID>
-
-
-###SITE###
-//Charger les fichiers npm
-npm i
-
-//Affiche la version
-npm list next
-
-//Lancer le site
-npm run dev
-
-
 ###PM2###
 //Installation de pm2
 sudo npm install -g pm2
@@ -157,16 +83,3 @@ module.exports = {
     }
   ]
 };
-
-//Lancement de pm2
-pm2 start ecosystem.config.js
-
-//Après une modif dans le fichier
-pm2 stop all
-pm2 delete all
-pm2 start ecosystem.config.js
-pm2 save
-
-//Voir les logs
-pm2 logs express-site
-	 fastapi-app

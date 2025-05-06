@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from routes import utilisateur, autorisation, badge, salle, classe, equipement, edt, pea, bae, pgs, psw, reservation
 import ipaddress
 
@@ -80,6 +81,6 @@ app.add_middleware(
 )
 
 #Message de bienvenue
-@app.get("/")
+@app.get("/", include_in_schema=False)
 def root():
-    return {"message": "Bienvenue sur l'API Campus Accès"}
+    return RedirectResponse(url="/docs")
