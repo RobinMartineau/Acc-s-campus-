@@ -1,7 +1,7 @@
 # Partie Commune
 
   - Bon de commande --> Contient tous les bons de commandes réalisés pour le projet.
-  - Deploiement --> Contient le diagramme de déploiement ainsi que les guides dinstallation des différentes partie du projet.
+  - Deploiement --> Contient le diagramme de déploiement ainsi que les guides dinstallation et d'utilisations des différentes partie du projet.
   - Planification --> Contient la planification.
   - RequirementsDiagrams --> Contient les différents diagrammes d'éxigence.
   - Reseau --> Contient le schémas réseau ainsi que les différents guide de mise en place du réseau.
