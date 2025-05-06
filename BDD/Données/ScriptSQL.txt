@@ -1,3 +1,5 @@
+-- DOCUMENT REALISE PAR LORICK FOUQUET --
+
 CREATE DATABASE campus_db;
 \c campus_db
 

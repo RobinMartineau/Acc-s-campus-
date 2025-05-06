@@ -1,3 +1,5 @@
+-- DOCUMENT REALISE PAR LORICK FOUQUET --
+
 ###OS###
 //Installation classique Debian 12
 
@@ -48,3 +50,32 @@ pip install python-dotenv
 //Installation de nodejs npm
 su - 
 apt install nodejs npm -y
+
+###PM2###
+//Installation de pm2
+sudo npm install -g pm2
+
+//Ajout d'un fichier ecosystem.config.js
+micro ecosystem.config.js
+(dans le fichier)
+module.exports = {
+  apps: [
+    {
+      name: 'express-site',
+      script: 'npm',
+      args: 'run dev',
+      cwd: '/home/user/SITE/PSW-main',
+      watch: true,
+      env: {
+        NODE_ENV: 'development',
+      }
+    },
+    {
+      name: 'fastapi-app',
+      script: '/home/user/BDD/bin/python',
+      args: '-m uvicorn main:app --host 0.0.0.0 --port 8000 --reload',
+      cwd: '/home/user/Documents/API',
+      watch: true
+    }
+  ]
+};

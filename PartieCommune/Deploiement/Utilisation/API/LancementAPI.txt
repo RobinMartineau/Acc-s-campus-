@@ -1,0 +1,23 @@
+-- DOCUMENT REALISE PAR LORICK FOUQUET --
+
+###Lancer l'API unitairement###
+//Dans le repertoire ou se trouve le fichier main.py, lancer uvicorn
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+
+###Lancer l'API grouper avec le site grâce à pm2###
+//Lancer pm2
+pm2 start ecosystem.config.js
+
+//Après une modif dans le fichier ecosystem.config.js
+pm2 stop all
+pm2 delete all
+pm2 start ecosystem.config.js
+pm2 save
+
+//Voir les logs de l'API
+pm2 logs fastapi-app
+
+
+###Documentation###
+//La documentation se trouve à l'adresse https://api.campus.local/docs
