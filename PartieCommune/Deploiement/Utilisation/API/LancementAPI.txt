@@ -1,9 +1,5 @@
 -- DOCUMENT REALISE PAR LORICK FOUQUET --
 
-###IMPORT DES FICHIERS###
-//Récupérer les fichiers dans le repertoire BDD/API sur notre repertoire GitHub
-//Les coller dans un repertoire vide sur le PSW
-
 ###Lancer l'API unitairement###
 //Dans le repertoire ou se trouve le fichier main.py, lancer uvicorn
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
