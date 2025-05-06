@@ -1,0 +1,58 @@
+-- DOCUMENT REALISE PAR LORICK FOUQUET --
+
+SUR LE POSTE SERVER WEB (PSW) (ou alors sur un serveur dédier)
+
+//Installation de bind9
+sudo apt update
+sudo apt install bind9 bind9utils bind9-doc
+
+//Configuration de bind9
+sudo micro /etc/bind/named.conf.options
+(dans le fichier)
+options {
+    directory "/var/cache/bind";
+
+    recursion yes;
+    allow-recursion { 192.168.30.0/24; 192.168.0.0/22; 192.168.4.0/22; };
+
+    allow-query { 192.168.30.0/24; 192.168.0.0/22; 192.168.4.0/22; };
+    listen-on { 127.0.0.1; 192.168.30.3; };
+
+    forwarders {
+        1.1.1.1;
+        8.8.8.8;
+    };
+
+    dnssec-validation auto;
+    auth-nxdomain no;
+    listen-on-v6 { none; };
+};
+
+//Déclarer la zone campus.local
+sudo micro /etc/bind/named.conf.local
+(dans le fichier)
+zone "campus.local" {
+    type master;
+    file "/etc/bind/db.campus.local";
+};
+
+//Modification de la zone déclaré
+sudo cp /etc/bind/db.local /etc/bind/db.campus.local
+sudo micro /etc/bind/db.campus.local
+(dans le fichier)
+$TTL    604800
+@       IN      SOA     psw.campus.local. admin.campus.local. (
+                              3         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+
+@       IN      NS      psw.campus.local.
+
+psw     IN      A       192.168.30.3
+web     IN      A       192.168.30.3
+api     IN      A       192.168.30.3
+
+//Redémarrer bind9
+sudo systemctl restart bind9

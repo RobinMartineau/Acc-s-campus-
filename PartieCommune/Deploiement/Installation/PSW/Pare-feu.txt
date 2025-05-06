@@ -1,7 +1,4 @@
--- DOCUMENT REALISE PAR LORICK FOUQUET --
-
 SUR LE POSTE SERVER WEB (PSW)
-
 //Installation ufw
 sudo apt install ufw -y
 
