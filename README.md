@@ -11,6 +11,6 @@ Le repertoire GitHub est organisé de la sorte:
   - PEA --> Tout le travail en lien avec la PEA. Cette partie est réalisé par Robin Martineau.
   - PGS --> Tout le travail en lien avec l'IHM présente sur le PGS. Cette partie est réalisé par Sacha Leseignoux.
   - PSW --> Tout le travail en lien avec site internet hébergé par le PSW. Cette partie est réalisé par Thomas Gasche.
-  - PartieCommune --> Tout le travail commun en général, comprenant la mise en place réseau, les guides d'installations des différentes parties ainsi que les tests d'intégrations, etc...
+  - PartieCommune --> Tout le travail commun en général, comprenant la mise en place réseau, les guides d'installations et d'utilisations des différentes parties, les tests d'intégrations, etc...
 
 Lien vers le dossier commun: https://onedrive.live.com/edit?id=5916B8EC38AEEB2E!se056b463090a40dcb3edf77b24f888b4&resid=5916B8EC38AEEB2E!se056b463090a40dcb3edf77b24f888b4&cid=5916b8ec38aeeb2e&ithint=file%2Cdocx&redeem=aHR0cHM6Ly8xZHJ2Lm1zL3cvYy81OTE2YjhlYzM4YWVlYjJlL0VXTzBWdUFLQ2R4QXMtMzNleVQ0aUxRQkwzU1BIZk5NZ2JYYjdCQnAxSC1TQnc_ZT1ySlZXMEI&migratedtospo=true&wdo=2
