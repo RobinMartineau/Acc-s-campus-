@@ -1,0 +1,80 @@
+-- DOCUMENT REALISE PAR LORICK FOUQUET --
+
+SUR LE POSTE SERVER WEB (PSW)
+
+//Installation de nginx
+sudo apt install nginx
+
+//Ajouter une certificat SSL auto-signé
+sudo mkdir /etc/nginx/ssl
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/campus.local.key -out /etc/nginx/ssl/campus.local.crt
+--> FR
+--> Pays de la Loire
+--> Angers
+--> BTS CIEL
+--> CampusAcces
+--> *.campus.local
+--> lorick.fqt@gmail.com
+
+//Vérifier le contenu du certificat
+openssl x509 -in /etc/nginx/ssl/campus.local.crt -text -noout
+
+//Créer une configuration de site
+sudo micro /etc/nginx/sites-available/psw.campus.local
+(dans le fichier)
+# API
+server {
+    listen 443 ssl;
+    server_name api.campus.local;
+    ssl_certificate /etc/nginx/ssl/campus.local.crt;
+    ssl_certificate_key /etc/nginx/ssl/campus.local.key;
+
+    location / {
+        allow 192.168.4.0/22;  # Autorise VLAN 20
+	allow 192.168.30.0/24; # Autorise VLAN 30
+	allow 172.20.0.0/16; # Autorise Baronnerie
+        deny all;
+        proxy_pass http://192.168.30.3:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+
+# Site web
+server {
+    listen 443 ssl;
+    server_name web.campus.local;
+    ssl_certificate /etc/nginx/ssl/campus.local.crt;
+    ssl_certificate_key /etc/nginx/ssl/campus.local.key;
+    
+    location / {
+        allow 192.168.0.0/22;  # Autorise VLAN 10
+	allow 192.168.30.0/24; # Autorise VLAN 30
+	allow 172.20.0.0/16; # Autorise Baronnerie
+        deny all;
+        proxy_pass http://192.168.30.3:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+
+# Redirection HTTP vers HTTPS pour api.campus.local
+server {
+    listen 80;
+    server_name api.campus.local;
+    return 301 https://$host$request_uri;
+}
+
+# Redirection HTTP vers HTTPS pour web.campus.local
+server {
+    listen 80;
+    server_name web.campus.local;
+    return 301 https://$host$request_uri;
+}
+
+//Activer le site
+sudo ln -s /etc/nginx/sites-available/psw.campus.local /etc/nginx/sites-enabled/
+
+//Démarrer nginx
+sudo systemctl restart nginx
+
