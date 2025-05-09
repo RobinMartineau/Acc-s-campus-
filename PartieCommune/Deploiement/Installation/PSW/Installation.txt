@@ -3,6 +3,7 @@
 ###OS###
 //Installation classique Debian 12
 
+
 ###EDITEUR DE TEXTE###
 //Installer micro
 sudo apt install micro -y

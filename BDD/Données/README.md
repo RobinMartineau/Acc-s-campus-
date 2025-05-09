@@ -1,3 +1,3 @@
 # Données
 
-  - MCD --> Modèle conceptuelle de données
+  - MCD --> Modèle conceptuel de données
