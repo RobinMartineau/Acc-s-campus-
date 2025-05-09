@@ -1,4 +1,8 @@
-DEBIAN12
+-- DOCUMENT REALISE PAR LORICK FOUQUET --
+
+###OS###
+//Installation classique Debian 12
+
 
 ###EDITEUR DE TEXTE###
 //Installer micro
@@ -17,7 +21,8 @@ sudo systemctl enable postgresql
 //Se connecter à PostgreSQL
 sudo su - postgres
 psql
-//Coller le script SQL ici
+
+//Copier le script SQL puis quitter postgreSQL
 
 
 ###PYTHON###
@@ -58,8 +63,8 @@ apt install nodejs npm -y
 //Les importer dans le répertoire souhaité
 
 
-###CHARGER LES FICHIERS DU SITE###
-npm i
+###CHARGER LES FICHIERS DU SITE  
+npm i 
 
 
 ###PM2###
