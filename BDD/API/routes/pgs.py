@@ -337,3 +337,51 @@ def activerBadge(request: schemas.ActiBadge, db: Session = Depends(get_db)):
     db.refresh(badge)
 
     return badge
+
+#Route GET pour récupérer les autorisations d'un utilisateur
+@router.get("/autorisation/utilisateur/{id_utilisateur}",
+    summary="Lister les autorisations d'un utilisateur",
+    description="Cette route permet de récupérer toutes les autorisations associées à un utilisateur donné, "
+                "à partir de son identifiant. Elle retourne une liste vide uniquement en cas d'erreur "
+                "(ex : utilisateur inexistant ou aucune autorisation liée).",
+    response_model=list[schemas.Autorisation],
+    responses={
+        200: {
+            "description": "Liste des autorisations récupérée avec succès",
+            "content": {
+                "application/json": {
+                    "example": [
+                        {
+                            "id": 7,
+                            "id_utilisateur": 3,
+                            "id_salle": 12,
+                            "autorisee": True
+                        },
+                        {
+                            "id": 9,
+                            "id_utilisateur": 3,
+                            "id_salle": 6,
+                            "autorisee": False
+                        }
+                    ]
+                }
+            }
+        },
+        404: {
+            "description": "Aucune autorisation trouvée pour cet utilisateur",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Aucune autorisation trouvée pour cet utilisateur."
+                    }
+                }
+            }
+        }
+    },
+tags=["PGS"])
+def autorisationsUtilisateur(id_utilisateur: int, db: Session = Depends(get_db)):
+    autorisations = db.query(models.Autorisation).filter(models.Autorisation.id_utilisateur == id_utilisateur).all()
+    if not autorisations:
+        raise HTTPException(status_code=404, detail="Aucune autorisation trouvée pour cet utilisateur.")
+    return autorisations
+
