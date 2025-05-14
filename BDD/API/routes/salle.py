@@ -58,12 +58,39 @@ def getSalles(db: Session = Depends(get_db)):
     
     return salle
 
-#Route POST pour ajouter une entrées dans Salle
-@router.post("/salle/", response_model = schemas.SalleResponse, include_in_schema=False)
-def postSalle(salle: schemas.SalleCreate, db: Session = Depends(get_db)):
-    db_salle = models.Salle(**salle.dict())
-    db.add(db_salle)
-    db.commit()
-    db.refresh(db_salle)
+#Route GET pour récupérer l'id d'une salle en fonction du numéro
+@router.get(
+    "/salle/{numero}",
+    summary="Obtenir l'ID d'une salle via son numéro",
+    description=(
+        "Permet de récupérer l'identifiant unique (`id`) d'une salle à partir de son numéro (ex. : 'A101').\n\n"
+        "Ce `id` est utilisé dans d'autres opérations comme l'enregistrement d'un équipement ou une réservation."
+    ),
+    responses={
+        200: {
+            "description": "Identifiant de salle récupéré avec succès",
+            "content": {
+                "application/json": {
+                    "example": 5
+                }
+            }
+        },
+        404: {
+            "description": "Salle non trouvée",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Salle non trouvée"
+                    }
+                }
+            }
+        }
+    },
+tags=["PEA", "BAE"])
+def getIdSalle(numero: str, db: Session = Depends(get_db)):
+    salle = db.query(models.Salle).filter(models.Salle.numero == numero).first()
 
-    return db_salle
+    if not salle:
+        raise HTTPException(status_code = 404, detail = "Salle non trouvée")
+
+    return salle.id
