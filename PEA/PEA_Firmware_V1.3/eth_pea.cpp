@@ -1,12 +1,34 @@
 #include "pea.h"
 
 /* Variable utilisé */
-byte mac[] = {0x00, 0x80, 0xE1, 0xAA, 0xBB, 0xCC};
-//IPAddress serverIP(192, 168, 30, 3);
+byte mac[6]; //= {0x00, 0x80, 0xE1, 0xAA, 0xBB, 0xCC};
+IPAddress serverIP(192, 168, 30, 3);
 EthernetClient client;
    
+/*===================================================
+ * Fonction permettant la création d'une adresse MAC à partir de l'UID du STM32
+ ====================================================*/
+ 
+void makeMacFromUID(byte mac[6])
+{
+Serial.println("Construction de l'adresse MAC");
+Serial.println("Debut de la lecture");
+volatile uint32_t *uid = (uint32_t*)UID_ADDR;
+uint32_t w0 = uid[0];
+uint32_t w1 = uid[1];
+uint32_t w2 = uid[2];
+Serial.println("Fin de la lecture");
 
+  /* Premier octet : 00000010b  = unicast + locally-administered */
+  mac[0] = 0x02;
 
+  /* Les 5 octets restants viennent du UID, mélangés             */
+  mac[1] =  w0        & 0xFF;
+  mac[2] = (w0 >> 16) & 0xFF;
+  mac[3] = (w1 >>  8) & 0xFF;
+  mac[4] =  w2        & 0xFF;
+  mac[5] = (w2 >> 24) & 0xFF;
+}
 
 /*==========================================
  * Fonction d'initialisation de l'ethernet
@@ -26,6 +48,9 @@ void setupEthernet() {
   //IPAddress gateway(192, 168, 30, 1);
   //IPAddress subnet(255, 255, 255, 0);
   
+  
+  makeMacFromUID(mac);
+  delay(100);
   Ethernet.begin(mac);
   delay(500);
 
@@ -71,13 +96,21 @@ void setupEthernet() {
   IPAddress dns = Ethernet.dnsServerIP();
   Serial.print("DNS : ");
   Serial.println(dns);
-
+  
+  Serial.print("MAC :");
+   for (byte i = 0; i < 6; ++i) {
+    if (mac[i] < 0x10) Serial.print('0');  // 0-padding (0A→0A, 03→03)
+    Serial.print(mac[i], HEX);             // impression en héx. majuscules
+    if (i < 5) Serial.print(':');
+  }
+  Serial.println();
+  
   // Affichage écran
   Ethernet.maintain();
 
   Serial.println("Tentative de connexion au serveur...");
 
-  if (client.connect(serverIP, 8000)) {
+  if (client.connect(serverIP, SERVER_PORT)) {
     Serial.println("Connexion TCP serveur OK !");
     client.stop();
   } else {
@@ -126,11 +159,11 @@ String sendHttpPost(String uidHex)
   Serial.println(jsonBody);
 
   Serial.println("Connexion au serveur...");
-  if (client.connect(serverIP, 8000)) {
+  if (client.connect(serverIP,SERVER_PORT)) {
     Serial.println("Connecté au serveur, envoi de la requête HTTP POST...");
 
     client.println("POST /pea/acces/badge HTTP/1.1");
-    client.println("Host: 192.168.30.3:8000");
+    client.println("Host: api.campus.local");
     client.println("Content-Type: application/json");
     client.print("Content-Length: ");
     client.println(jsonBody.length());
@@ -262,11 +295,11 @@ String sendHttpPostPassword(String code)
   Serial.println(jsonBody);
 
   Serial.println("Connexion au serveur...");
-  if (client.connect(serverIP, serverPort)) {
+  if (client.connect(serverIP, SERVER_PORT)) {
     Serial.println("Connecté au serveur, envoi de la requête HTTP POST...");
 
     client.println("POST /pea/acces/digicode HTTP/1.1");
-    client.println("Host: 192.168.30.3:8000");
+    client.println("Host: api.campus.local");
     client.println("Content-Type: application/json");
     client.print("Content-Length: ");
     client.println(jsonBody.length());
@@ -362,4 +395,71 @@ void actionResponse(String serverResponse) {
     digitalWrite(TFT_CS, HIGH);
     delay(50);
   }
+}
+
+/*===========================================================================================
+ * 
+ * ACTION RESPONSE
+ * Fontion qui fait suite à la fonction d'envoie d'une requète HTTP
+ * 
+ ============================================================================================*/
+
+int httpGetIDSalle(const String& numSalle)
+{
+  String serverResponse;
+  int idSalle = -1;                 // -1 ⇒ erreur par défaut
+
+  digitalWrite(ETH_CS, LOW);
+  delay(50);
+
+  Serial.println("Connexion au serveur…");
+  if (client.connect(serverIP, SERVER_PORT)) {          // serverPort = 8000
+      //---------------   ENVOI DE LA REQUÊTE GET   -----------------
+      client.print(F("GET /salle/"));
+      client.print(numSalle);
+      client.println(F(" HTTP/1.1"));
+      client.print  (F("Host: "));  client.print(serverIP); client.print(F(":")); client.println(serverPort);
+      client.println(F("Connection: close"));
+      client.println();                               // ligne vide de fin d’entête
+      //--------------------------------------------------------------
+
+      //---------   ATTENTE DE LA RÉPONSE (10 s max)   --------------
+      unsigned long t0 = millis();
+      while (client.connected() && !client.available()) {
+        if (millis() - t0 > 10000) {          // 10 s timeout
+          Serial.println("Timeout serveur");
+          break;
+        }
+      }
+
+      //-------------   LECTURE DE LA RÉPONSE   ---------------------
+      bool jsonFound = false;
+      while (client.available()) {
+        String line = client.readStringUntil('\n');
+        line.trim();
+        if (!jsonFound && line.startsWith("{")) {      // première accolade = début JSON
+          serverResponse = line;
+          jsonFound = true;
+        }
+      }
+      client.stop();
+  } else {
+      Serial.println("Échec connexion serveur");
+  }
+
+  digitalWrite(ETH_CS, HIGH);
+  delay(50);
+
+  //------------------   PARSING JSON   -----------------------------
+  if (serverResponse.length()) {
+      StaticJsonDocument<128> doc;
+      DeserializationError err = deserializeJson(doc, serverResponse);
+      if (!err) {
+          idSalle = doc["id_salle"] | -1;      // -1 si champ absent
+          Serial.print("ID salle reçu = "); Serial.println(idSalle);
+      } else {
+          Serial.print("Erreur JSON : "); Serial.println(err.f_str());
+      }
+  }
+  return idSalle;        // ← tu peux ensuite décider quoi en faire
 }
