@@ -137,18 +137,35 @@ void setup() {
   
   attachInterrupt(digitalPinToInterrupt(D0_PIN), D0Interrupt, FALLING);
   attachInterrupt(digitalPinToInterrupt(D1_PIN), D1Interrupt, FALLING);
-  Serial.println("Lecture brute Wiegand en cours...");
-  
+  //Serial.println("Lecture brute Wiegand en cours...");
+  Serial.println("Attribution de l'adresse MAC...");
+  makeMacFromUID(mac);
+  //for(int i = 0;i < 6;i++){
+  //  Serial.print(mac[i] + ";");
+  //  if(i == 5){
+  //    Serial.println(mac[i]);
+  //  }
+  //}
+  Serial.println("Attribution de l'adresse MAC fait !");
   //Ethernet.init(5);
   //IPAddress ip(192,168,248,102);
   //Ethernet.begin(mac,ip);
   //digitalWrite(RELAY_PIN, LOW);
-
-  Serial.println(Ethernet.localIP());
+  delay(50);
   Serial.println("Connexion au réseaux...");
+  delay(50);
   setupEthernet();
+  delay(50);
   Serial.println("Connexion établie !"); 
-  delay(2000);
+  delay(50);
+  Serial.println("Récupération de l'ID de la classe...");
+  String numClass = keypad.numClass();
+  int idSalle = httpGetIDSalle(numClass);
+  Serial.println("Récupération de l'ID de la classe fait !");
+  Serial.print("ID : ");
+  Serial.println(idSalle);
+  delay(500);
+  Serial.println("Passage en mode menu");
   menuChoixMode();
 }
 

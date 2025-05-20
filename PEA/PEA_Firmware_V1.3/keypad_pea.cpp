@@ -64,7 +64,12 @@ int Keypad4x4::readColumns() {
   }
   return -1;
 }
-
+/*===========================================================================================
+ * 
+ * PASSWORD
+ * Fonction qui permet de taper un mot de passe
+ * 
+ ============================================================================================*/
 String Keypad4x4::password() {
   digitalWrite(TFT_CS,LOW);
   delay(50);
@@ -99,6 +104,50 @@ String Keypad4x4::password() {
     }
   }
   return passwordKeys;
+  digitalWrite(TFT_CS,HIGH);
+  delay(50);
+}
+
+/*===========================================================================================
+ * 
+ * NUMCLASS
+ * Fonction pour taper le numéro d'une salle
+ * 
+ ============================================================================================*/
+String Keypad4x4::numClass(){
+  digitalWrite(TFT_CS,LOW);
+  delay(50);
+  String numClass = "";
+  bool saisieCommencee = false;
+
+  tft.fillScreen(ILI9341_WHITE);  
+        tft.setTextColor(ILI9341_BLACK);
+        tft.setTextSize(2);
+        tft.setCursor(20, 80);
+        tft.println("Ecrivez le numéro de la salle :");
+
+  while (numClass.length() < 4) {
+    char k = getKey();
+    if (k) {
+      if (!saisieCommencee) {
+        saisieCommencee = true;
+        tft.fillScreen(ILI9341_WHITE);  
+        tft.setTextColor(ILI9341_BLACK);
+        tft.setTextSize(3);
+        tft.setCursor(20, 80);
+        tft.println("Numéro :");
+      }
+
+      numClass += k;
+      
+      // Réaffiche le code actuel à chaque touche tapée
+      tft.setCursor(20, 130);
+      tft.setTextSize(4);
+      tft.setTextColor(ILI9341_BLACK);
+      tft.print(numClass);
+    }
+  }
+  return numClass;
   digitalWrite(TFT_CS,HIGH);
   delay(50);
 }

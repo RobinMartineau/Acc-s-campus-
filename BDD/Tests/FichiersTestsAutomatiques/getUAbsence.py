@@ -1,49 +1,73 @@
+import pytest
 from fastapi import HTTPException
 from unittest.mock import MagicMock
 from routes.psw import getUAbsence
-from models import EDTUtilisateur, Absence
 import datetime
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+from mocks import MockEDTUtilisateur, MockAbsence
 
-#T4.1 – Aucun cours passé
+# T4.1 – Aucun cours passé
 def test_get_uabsence_aucun_cours_passe():
     db = MagicMock()
     db.query().filter().all.return_value = []
 
-    try:
+    with pytest.raises(HTTPException) as e:
         getUAbsence(id_utilisateur=1, db=db)
-        assert False, "Devait lever une exception 404 pour cours vide"
-    except HTTPException as e:
-        assert e.status_code == 404
-        assert e.detail == "Absences non trouvées"
 
-#T4.2 – Cours passés mais aucune absence
+    assert e.value.status_code == 404
+    assert e.value.detail == "Absences non trouvées"
+
+# T4.2 – Cours passés mais aucune absence
 def test_get_uabsence_aucune_absence():
     db = MagicMock()
 
     mock_cours = [
-        EDTUtilisateur(id=10, id_utilisateur=1, horairedebut=datetime.datetime(2025, 3, 31, 8, 0), 
-                       horairefin=datetime.datetime(2025, 3, 31, 10, 0), cours="Mathématiques")
+        MockEDTUtilisateur(
+            id=10,
+            horairedebut=datetime.datetime(2025, 3, 31, 8, 0),
+            horairefin=datetime.datetime(2025, 3, 31, 10, 0),
+            cours="Mathématiques",
+            id_utilisateur=1,
+            id_salle=1,
+            id_classe=1
+        )
     ]
 
     db.query().filter().all.side_effect = [mock_cours, []]
 
-    try:
+    with pytest.raises(HTTPException) as e:
         getUAbsence(id_utilisateur=1, db=db)
-        assert False, "Devait lever une exception 404 pour absence vide"
-    except HTTPException as e:
-        assert e.status_code == 404
-        assert e.detail == "Absences non trouvées"
 
-#T4.3 – Absences valides présentes
+    assert e.value.status_code == 404
+    assert e.value.detail == "Absences non trouvées"
+
+# T4.3 – Absences valides présentes
 def test_get_uabsence_succes():
     db = MagicMock()
 
     mock_cours = [
-        EDTUtilisateur(id=10, id_utilisateur=1, horairedebut=datetime.datetime(2025, 3, 31, 8, 0), 
-                       horairefin=datetime.datetime(2025, 3, 31, 10, 0), cours="Mathématiques"),
+        MockEDTUtilisateur(
+            id=10,
+            horairedebut=datetime.datetime(2025, 3, 31, 8, 0),
+            horairefin=datetime.datetime(2025, 3, 31, 10, 0),
+            cours="Mathématiques",
+            id_utilisateur=1,
+            id_salle=1,
+            id_classe=1
+        )
     ]
+
     mock_absences = [
-        Absence(id=1, id_edtutilisateur=10, justifiee=True, valide=True, motif="Maladie")
+        MockAbsence(
+            id=1,
+            valide=True,
+            motif="Maladie",
+            justifiee=True,
+            id_utilisateur=1,
+            id_edt_utilisateur=10
+        )
     ]
 
     db.query().filter().all.side_effect = [mock_cours, mock_absences]

@@ -1,49 +1,72 @@
+import pytest
 from fastapi import HTTPException
 from unittest.mock import MagicMock
 from routes.psw import getURetard
-from models import EDTUtilisateur, Retard
 import datetime
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+from mocks import MockEDTUtilisateur, MockRetard
 
-#T5.1 – Aucun cours passé
+# T5.1 – Aucun cours passé
 def test_get_uretard_aucun_cours_passe():
     db = MagicMock()
     db.query().filter().all.return_value = []
 
-    try:
+    with pytest.raises(HTTPException) as e:
         getURetard(id_utilisateur=1, db=db)
-        assert False, "Devait lever une exception 404 pour cours vide"
-    except HTTPException as e:
-        assert e.status_code == 404
-        assert e.detail == "Retards non trouvés"
 
-#T5.2 – Cours passés sans retards
+    assert e.value.status_code == 404
+    assert e.value.detail == "Retards non trouvés"
+
+# T5.2 – Cours passés sans retards
 def test_get_uretard_aucun_retard():
     db = MagicMock()
 
     mock_cours = [
-        EDTUtilisateur(id=20, id_utilisateur=1, horairedebut=datetime.datetime(2025, 3, 31, 9, 0), 
-                       horairefin=datetime.datetime(2025, 3, 31, 10, 0), cours="Physique")
+        MockEDTUtilisateur(
+            id=20,
+            horairedebut=datetime.datetime(2025, 3, 31, 9, 0),
+            horairefin=datetime.datetime(2025, 3, 31, 10, 0),
+            cours="Physique",
+            id_salle=1,
+            id_classe=1,
+            id_utilisateur=1
+        )
     ]
 
     db.query().filter().all.side_effect = [mock_cours, []]
 
-    try:
+    with pytest.raises(HTTPException) as e:
         getURetard(id_utilisateur=1, db=db)
-        assert False, "Devait lever une exception 404 pour retard vide"
-    except HTTPException as e:
-        assert e.status_code == 404
-        assert e.detail == "Retards non trouvés"
 
-#T5.3 – Retards valides présents
+    assert e.value.status_code == 404
+    assert e.value.detail == "Retards non trouvés"
+
+# T5.3 – Retards valides présents
 def test_get_uretard_succes():
     db = MagicMock()
 
     mock_cours = [
-        EDTUtilisateur(id=20, id_utilisateur=1, horairedebut=datetime.datetime(2025, 3, 31, 9, 0), 
-                       horairefin=datetime.datetime(2025, 3, 31, 10, 0), cours="Physique"),
+        MockEDTUtilisateur(
+            id=20,
+            horairedebut=datetime.datetime(2025, 3, 31, 9, 0),
+            horairefin=datetime.datetime(2025, 3, 31, 10, 0),
+            cours="Physique",
+            id_salle=1,
+            id_classe=1,
+            id_utilisateur=1
+        )
     ]
     mock_retards = [
-        Retard(id=1, id_edtutilisateur=20, duree=15, justifiee=False, motif="Transport en retard")
+        MockRetard(
+            id=1,
+            duree=15,
+            motif="Transport en retard",
+            justifiee=False,
+            id_utilisateur=1,
+            id_edt_utilisateur=20
+        )
     ]
 
     db.query().filter().all.side_effect = [mock_cours, mock_retards]

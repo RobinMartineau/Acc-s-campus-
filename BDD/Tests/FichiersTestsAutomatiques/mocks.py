@@ -50,10 +50,10 @@ class MockLog:
 
 #Mock pour les cours d’une salle (EDTSalle)
 class MockEDTSalle:
-    def __init__(self, id, horaire_debut, horaire_fin, cours, id_utilisateur, id_classe, id_salle):
+    def __init__(self, id, horairedebut, horairefin, cours, id_utilisateur, id_classe, id_salle):
         self.id = id
-        self.horaire_debut = horaire_debut
-        self.horaire_fin = horaire_fin
+        self.horairedebut = horairedebut
+        self.horairefin = horairefin
         self.cours = cours
         self.id_utilisateur = id_utilisateur
         self.id_classe = id_classe
@@ -61,10 +61,10 @@ class MockEDTSalle:
 
 #Mock pour les cours d’un utilisateur (EDTUtilisateur)
 class MockEDTUtilisateur:
-    def __init__(self, id, horaire_debut, horaire_fin, cours, id_salle, id_classe, id_utilisateur):
+    def __init__(self, id, horairedebut, horairefin, cours, id_salle, id_classe, id_utilisateur):
         self.id = id
-        self.horaire_debut = horaire_debut
-        self.horaire_fin = horaire_fin
+        self.horairedebut = horairedebut
+        self.horairefin = horairefin
         self.cours = cours
         self.id_salle = id_salle
         self.id_classe = id_classe
@@ -92,10 +92,10 @@ class MockRetard:
 
 #Mock pour les cours d’une classe (EDTClasse)
 class MockEDTClasse:
-    def __init__(self, id, horaire_debut, horaire_fin, cours, id_utilisateur, id_salle, id_classe):
+    def __init__(self, id, horairedebut, horairefin, cours, id_utilisateur, id_salle, id_classe):
         self.id = id
-        self.horaire_debut = horaire_debut
-        self.horaire_fin = horaire_fin
+        self.horairedebut = horairedebut
+        self.horairefin = horairefin
         self.cours = cours
         self.id_utilisateur = id_utilisateur
         self.id_salle = id_salle
@@ -111,10 +111,10 @@ class MockAutorisation:
 
 #Mock pour les réservations
 class MockReservation:
-    def __init__(self, id, horaire_debut, horaire_fin, id_edtsalle, id_utilisateur, id_salle, id_classe):
+    def __init__(self, id, horairedebut, horairefin, id_edtsalle, id_utilisateur, id_salle, id_classe):
         self.id = id
-        self.horaire_debut = horaire_debut
-        self.horaire_fin = horaire_fin
+        self.horairedebut = horairedebut
+        self.horairefin = horairefin
         self.id_edtsalle = id_edtsalle
         self.id_utilisateur = id_utilisateur
         self.id_salle = id_salle

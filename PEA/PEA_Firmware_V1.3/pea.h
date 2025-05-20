@@ -49,7 +49,8 @@ extern volatile unsigned long lastPulseTime;
 #define TFT_RST PA3
 #define TFT_MISO PA6
 
-#define SERVER_PORT 8000
+#define SERVER_PORT 443
+#define UID_ADDR  0x1FFFF7E8 
 
 /*==============================================================================================================================================
 ================================================================================================================================================
@@ -64,6 +65,8 @@ String lireBadge34();
 void setupEthernet();
 String sendHttpPost(String uidHex);
 String sendHttpPostPassword(String code);
+int httpGetIDSalle(const String& numSalle);
+void makeMacFromUID(byte mac[6]);
 void actionResponse(String serverResponse);
 void deverrouillerGache();
 
@@ -108,7 +111,7 @@ public:
   char getKey();
 
   String password();
-
+  String numClass();
 private:
   const byte* _rowPins;
   const byte* _colPins;

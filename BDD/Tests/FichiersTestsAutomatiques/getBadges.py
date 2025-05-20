@@ -1,28 +1,24 @@
+import pytest
 from fastapi import HTTPException
 from unittest.mock import MagicMock
 from routes.badge import getBadges
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+from mocks import MockBadge
 
-#Mock du modèle Badge
-class MockBadge:
-    def __init__(self, uid, actif, creation, id_utilisateur):
-        self.uid = uid
-        self.actif = actif
-        self.creation = creation
-        self.id_utilisateur = id_utilisateur
-
-#T7.1 – Aucun badge enregistré
+# T7.1 – Aucun badge enregistré
 def test_get_badges_aucun_badge():
     db = MagicMock()
     db.query().all.return_value = []
 
-    try:
+    with pytest.raises(HTTPException) as e:
         getBadges(db)
-        assert False, "Devait lever une exception 404"
-    except HTTPException as e:
-        assert e.status_code == 404
-        assert e.detail == "Aucun badge trouvé"
 
-#T7.2 – Liste de badges
+    assert e.value.status_code == 404
+    assert e.value.detail == "Aucun badge trouvé"
+
+# T7.2 – Liste de badges
 def test_get_badges_liste_complete():
     db = MagicMock()
     badges = [
@@ -34,6 +30,7 @@ def test_get_badges_liste_complete():
     response = getBadges(db)
 
     assert len(response) == 2
+
     assert response[0].uid == "A1B2C3F6"
     assert response[0].actif is True
     assert response[0].creation == "2025-03-31"

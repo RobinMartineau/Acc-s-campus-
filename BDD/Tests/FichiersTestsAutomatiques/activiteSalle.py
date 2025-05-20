@@ -3,43 +3,12 @@ from unittest.mock import MagicMock
 from fastapi import HTTPException
 import datetime
 from routes.psw import activiteSalle
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+from mocks import MockSalle, MockEDTSalle, MockUtilisateur, MockBadge, MockLog
 
-
-#Mocks
-class MockSalle:
-    def __init__(self, id=1):
-        self.id = id
-
-class MockEDTSalle:
-    def __init__(self, id=1, id_utilisateur=1, horairedebut="2025-04-28T08:00", horairefin="2025-04-28T10:00", cours="Maths"):
-        self.id = id
-        self.id_utilisateur = id_utilisateur
-        self.horairedebut = horairedebut
-        self.horairefin = horairefin
-        self.cours = cours
-
-class MockUtilisateur:
-    def __init__(self, id=1, nom="Dupont", prenom="Jean"):
-        self.id = id
-        self.nom = nom
-        self.prenom = prenom
-
-class MockLog:
-    def __init__(self, id=1, uid="12345678", horaire=None):
-        self.id = id
-        self.uid = uid
-        if horaire:
-            self.horaire = horaire
-        else:
-            self.horaire = datetime.datetime.now()
-
-class MockBadge:
-    def __init__(self, uid="12345678", id_utilisateur=1):
-        self.uid = uid
-        self.id_utilisateur = id_utilisateur
-
-
-#T15.1 - Salle inexistante
+# T15.1 - Salle inexistante
 def test_01_salle_inexistante():
     db = MagicMock()
     db.query().filter().first.return_value = None
@@ -49,11 +18,10 @@ def test_01_salle_inexistante():
     assert exc.value.status_code == 404
     assert "Salle non trouvée" in exc.value.detail
 
-
-#T15.2 - Aucune réservation
+# T15.2 - Aucune réservation
 def test_02_aucune_reservation():
     db = MagicMock()
-    db.query().filter().first.return_value = MockSalle()
+    db.query().filter().first.return_value = MockSalle(1, None, None)
     db.query().filter().all.return_value = []
 
     with pytest.raises(HTTPException) as exc:
@@ -61,43 +29,40 @@ def test_02_aucune_reservation():
     assert exc.value.status_code == 404
     assert "Aucune réservation trouvée" in exc.value.detail
 
-
-#T15.3 - Réservation sans utilisateur
+# T15.3 - Réservation sans utilisateur
 def test_03_reservation_sans_utilisateur():
     db = MagicMock()
-    db.query().filter().first.return_value = MockSalle()
-    db.query().filter().all.return_value = [MockEDTSalle(id_utilisateur=None)]
+    db.query().filter().first.return_value = MockSalle(1, None, None)
+    db.query().filter().all.return_value = [MockEDTSalle(1, "2025-04-28T08:00", "2025-04-28T10:00", "Maths", None, 1, 1)]
 
     with pytest.raises(HTTPException) as exc:
         activiteSalle(1, db)
     assert exc.value.status_code == 404
     assert "Réservation sans utilisateur associée" in exc.value.detail
 
-
-#T15.4 - Utilisateur réservation introuvable
+# T15.4 - Utilisateur réservation introuvable
 def test_04_utilisateur_reservation_introuvable():
     db = MagicMock()
     db.query().filter().first.side_effect = [
-        MockSalle(),
+        MockSalle(1, None, None),
         None
     ]
-    db.query().filter().all.return_value = [MockEDTSalle()]
+    db.query().filter().all.return_value = [MockEDTSalle(1, "2025-04-28T08:00", "2025-04-28T10:00", "Maths", 1, 1, 1)]
 
     with pytest.raises(HTTPException) as exc:
         activiteSalle(1, db)
     assert exc.value.status_code == 404
     assert "Utilisateur introuvable" in exc.value.detail
 
-
-#T15.5 - Aucun badge récent
+# T15.5 - Aucun badge récent
 def test_05_aucun_badge_recent():
     db = MagicMock()
     db.query().filter().first.side_effect = [
-        MockSalle(),
-        MockUtilisateur()
+        MockSalle(1, None, None),
+        MockUtilisateur(1, "id", "mdp", "Jean", "Dupont", "eleve", None, None, None)
     ]
     db.query().filter().all.side_effect = [
-        [MockEDTSalle()],
+        [MockEDTSalle(1, "2025-04-28T08:00", "2025-04-28T10:00", "Maths", 1, 1, 1)],
         []
     ]
 
@@ -106,82 +71,79 @@ def test_05_aucun_badge_recent():
     assert res["utilisateurs_derniere_heure"] == []
     assert res["nombre_utilisateurs"] == 0
 
-
-#T15.6 - Badge introuvable
+# T15.6 - Badge introuvable
 def test_06_badge_introuvable():
     db = MagicMock()
     db.query().filter().first.side_effect = [
-        MockSalle(),
-        MockUtilisateur(),
+        MockSalle(1, None, None),
+        MockUtilisateur(1, "id", "mdp", "Jean", "Dupont", "eleve", None, None, None),
         None
     ]
     db.query().filter().all.side_effect = [
-        [MockEDTSalle()],
-        [MockLog()]
+        [MockEDTSalle(1, "2025-04-28T08:00", "2025-04-28T10:00", "Maths", 1, 1, 1)],
+        [MockLog(1, datetime.datetime.now(), 1, "12345678")]
     ]
-    db.query().join().join().filter().all.return_value = [MockLog()]
+    db.query().join().join().filter().all.return_value = [MockLog(1, datetime.datetime.now(), 1, "12345678")]
 
     with pytest.raises(HTTPException) as exc:
         activiteSalle(1, db)
     assert exc.value.status_code == 404
     assert "Badge non trouvé." in exc.value.detail
 
-
-#T15.7 - Badge non associé
+# T15.7 - Badge non associé
 def test_07_badge_non_associe():
     db = MagicMock()
     db.query().filter().first.side_effect = [
-        MockSalle(),
-        MockUtilisateur(),
-        MockBadge(id_utilisateur=None)
+        MockSalle(1, None, None),
+        MockUtilisateur(1, "id", "mdp", "Jean", "Dupont", "eleve", None, None, None),
+        MockBadge("12345678", True, None, None)  # id_utilisateur à None
     ]
     db.query().filter().all.side_effect = [
-        [MockEDTSalle()],
-        [MockLog()]
+        [MockEDTSalle(1, "2025-04-28T08:00", "2025-04-28T10:00", "Maths", 1, 1, 1)],
+        [MockLog(1, datetime.datetime.now(), 1, "12345678")]
     ]
-    db.query().join().join().filter().all.return_value = [MockLog()]
+    db.query().join().join().filter().all.return_value = [MockLog(1, datetime.datetime.now(), 1, "12345678")]
 
     with pytest.raises(HTTPException) as exc:
         activiteSalle(1, db)
     assert exc.value.status_code == 404
     assert "Badge non associé à un utilisateur." in exc.value.detail
 
-
-#T15.8 - Utilisateur badge introuvable
+# T15.8 - Utilisateur badge introuvable
 def test_08_utilisateur_badge_introuvable():
     db = MagicMock()
     db.query().filter().first.side_effect = [
-        MockSalle(),
-        MockUtilisateur(),
-        MockBadge(),
+        MockSalle(1, None, None),
+        MockUtilisateur(1, "id", "mdp", "Jean", "Dupont", "eleve", None, None, None),
+        MockBadge("12345678", True, None, 1),
         None
     ]
     db.query().filter().all.side_effect = [
-        [MockEDTSalle()],
-        [MockLog()]
+        [MockEDTSalle(1, "2025-04-28T08:00", "2025-04-28T10:00", "Maths", 1, 1, 1)],
+        [MockLog(1, datetime.datetime.now(), 1, "12345678")]
     ]
-    db.query().join().join().filter().all.return_value = [MockLog()]
-    
+    db.query().join().join().filter().all.return_value = [MockLog(1, datetime.datetime.now(), 1, "12345678")]
+
     with pytest.raises(HTTPException) as exc:
         activiteSalle(1, db)
     assert exc.value.status_code == 404
     assert "Utilisateur du badge non trouvé." in exc.value.detail
 
-#T15.9 - Succès complet
+# T15.9 - Succès complet
 def test_09_succes_complet():
     db = MagicMock()
     db.query().filter().first.side_effect = [
-        MockSalle(),
-        MockUtilisateur(),
-        MockBadge(),
-        MockUtilisateur()
+        MockSalle(1, None, None),
+        MockUtilisateur(1, "id", "mdp", "Jean", "Dupont", "eleve", None, None, None),
+        MockBadge("12345678", True, None, 1),
+        MockUtilisateur(1, "id", "mdp", "Jean", "Dupont", "eleve", None, None, None)
     ]
     db.query().filter().all.side_effect = [
-        [MockEDTSalle()],
-        [MockLog()]
+        [MockEDTSalle(1, "2025-04-28T08:00", "2025-04-28T10:00", "Maths", 1, 1, 1)],
+        [MockLog(1, datetime.datetime.now(), 1, "12345678")]
     ]
-    db.query().join().join().filter().all.return_value = [MockLog()]
-    
+    db.query().join().join().filter().all.return_value = [MockLog(1, datetime.datetime.now(), 1, "12345678")]
+
     res = activiteSalle(1, db)
     assert res["reservations"] != []
     assert res["utilisateurs_derniere_heure"] != []
