@@ -1,100 +1,82 @@
+import pytest
 from fastapi import HTTPException
 from unittest.mock import MagicMock
 from routes.pgs import dissocierBadge
-import schemas
+from schemas import AssoRequest
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+from mocks import MockUtilisateur, MockBadge
 
-#Mocks simples pour les modèles
-class MockBadge:
-    def __init__(self, uid, id_utilisateur=None):
-        self.uid = uid
-        self.id_utilisateur = id_utilisateur
-        self.actif = True
-        self.creation = "2025-03-31"
-
-class MockUtilisateur:
-    def __init__(self, id):
-        self.id = id
-
-#T12.1 – Utilisateur inexistant
+# T12.1 – Utilisateur inexistant
 def test_dissocier_utilisateur_inexistant():
     db = MagicMock()
     db.query().filter().first.side_effect = [None]
 
-    req = schemas.AssoRequest(uid="123ABC45", id_utilisateur=2)
+    req = AssoRequest(uid="123ABC45", id_utilisateur=2)
 
-    try:
+    with pytest.raises(HTTPException) as e:
         dissocierBadge(req, db)
-        assert False, "Devait lever une exception 404"
-    except HTTPException as e:
-        assert e.status_code == 404
-        assert e.detail == "Utilisateur non trouvé"
 
-#T12.2 – Badge inexistant
+    assert e.value.status_code == 404
+    assert e.value.detail == "Utilisateur non trouvé"
+
+# T12.2 – Badge inexistant
 def test_dissocier_badge_inexistant():
     db = MagicMock()
-    db.query().filter().first.side_effect = [
-        MockUtilisateur(id=2),
-        None
-    ]
+    utilisateur = MockUtilisateur(2, "id", "mdp", "Jean", "Dupont", "eleve", None, None, None)
+    db.query().filter().first.side_effect = [utilisateur, None]
 
-    req = schemas.AssoRequest(uid="123ABC45", id_utilisateur=2)
+    req = AssoRequest(uid="123ABC45", id_utilisateur=2)
 
-    try:
+    with pytest.raises(HTTPException) as e:
         dissocierBadge(req, db)
-        assert False, "Devait lever une exception 404"
-    except HTTPException as e:
-        assert e.status_code == 404
-        assert e.detail == "Badge non trouvé"
 
-#T12.3 – Badge non attribué
+    assert e.value.status_code == 404
+    assert e.value.detail == "Badge non trouvé"
+
+# T12.3 – Badge non attribué
 def test_dissocier_badge_non_attribue():
     db = MagicMock()
-    badge = MockBadge(uid="123ABC45", id_utilisateur=None)
+    utilisateur = MockUtilisateur(2, "id", "mdp", "Jean", "Dupont", "eleve", None, None, None)
+    badge = MockBadge("123ABC45", True, "2025-03-31", None)
 
-    db.query().filter().first.side_effect = [
-        MockUtilisateur(id=2),
-        badge
-    ]
+    db.query().filter().first.side_effect = [utilisateur, badge]
 
-    req = schemas.AssoRequest(uid="123ABC45", id_utilisateur=2)
+    req = AssoRequest(uid="123ABC45", id_utilisateur=2)
 
-    try:
+    with pytest.raises(HTTPException) as e:
         dissocierBadge(req, db)
-        assert False, "Devait lever une exception 400"
-    except HTTPException as e:
-        assert e.status_code == 400
-        assert e.detail == "Ce badge n'est pas déjà attribué à un utilisateur"
 
-#T12.4 – Badge attribué à un autre utilisateur
+    assert e.value.status_code == 400
+    assert e.value.detail == "Ce badge n'est pas déjà attribué à un utilisateur"
+
+# T12.4 – Badge attribué à un autre utilisateur
 def test_dissocier_badge_autre_utilisateur():
     db = MagicMock()
-    badge = MockBadge(uid="123ABC45", id_utilisateur=3)
+    utilisateur = MockUtilisateur(2, "id", "mdp", "Jean", "Dupont", "eleve", None, None, None)
+    badge = MockBadge("123ABC45", True, "2025-03-31", 3)
 
-    db.query().filter().first.side_effect = [
-        MockUtilisateur(id=2),
-        badge
-    ]
+    db.query().filter().first.side_effect = [utilisateur, badge]
 
-    req = schemas.AssoRequest(uid="123ABC45", id_utilisateur=2)
+    req = AssoRequest(uid="123ABC45", id_utilisateur=2)
 
-    try:
+    with pytest.raises(HTTPException) as e:
         dissocierBadge(req, db)
-        assert False, "Devait lever une exception 400"
-    except HTTPException as e:
-        assert e.status_code == 400
-        assert e.detail == "Ce badge est attribué à un autre utilisateur"
 
-#T12.5 – Dissociation réussie
+    assert e.value.status_code == 400
+    assert e.value.detail == "Ce badge est attribué à un autre utilisateur"
+
+# T12.5 – Dissociation réussie
 def test_dissocier_succes():
     db = MagicMock()
-    badge = MockBadge(uid="123ABC45", id_utilisateur=2)
+    utilisateur = MockUtilisateur(2, "id", "mdp", "Jean", "Dupont", "eleve", None, None, None)
+    badge = MockBadge("123ABC45", True, "2025-03-31", 2)
 
-    db.query().filter().first.side_effect = [
-        MockUtilisateur(id=2),
-        badge
-    ]
+    db.query().filter().first.side_effect = [utilisateur, badge]
+    db.refresh = MagicMock()
 
-    req = schemas.AssoRequest(uid="123ABC45", id_utilisateur=2)
+    req = AssoRequest(uid="123ABC45", id_utilisateur=2)
 
     response = dissocierBadge(req, db)
 

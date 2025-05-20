@@ -1,27 +1,31 @@
+import pytest
 from fastapi import HTTPException
 from unittest.mock import MagicMock
 from routes.salle import getSalles
-from models import Salle
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+from mocks import MockSalle
 
-#T14.1 – Aucune salle en base
+# T14.1 – Aucune salle en base
 def test_get_salles_aucune_salle():
     db = MagicMock()
     db.query().all.return_value = []
 
-    try:
+    with pytest.raises(HTTPException) as e:
         getSalles(db)
-        assert False, "Doit lever une exception 404 si aucune salle trouvée"
-    except HTTPException as e:
-        assert e.status_code == 404
-        assert e.detail == "Salles non trouvées"
 
-#T14.2 – Plusieurs salles présentes
+    assert e.value.status_code == 404
+    assert e.value.detail == "Salles non trouvées"
+
+# T14.2 – Plusieurs salles présentes
 def test_get_salles_liste_presente():
-    salle1 = Salle(id=1, numero="B101", statut=True)
-    salle2 = Salle(id=2, numero="A302", statut=False)
-
     db = MagicMock()
-    db.query().all.return_value = [salle1, salle2]
+    salles = [
+        MockSalle(1, "B101", True),
+        MockSalle(2, "A302", False)
+    ]
+    db.query().all.return_value = salles
 
     result = getSalles(db)
 
