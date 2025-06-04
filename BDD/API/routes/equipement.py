@@ -52,11 +52,11 @@ def get_db():
     },
 tags=["PEA", "BAE"])
 def postEquipement(equipement: schemas.EquipementCreate, db: Session = Depends(get_db)):
-    equipement = db.query(models.Equipement).filter(models.Equipement.adresse_mac == equipement.adresse_mac).first()
+    exist_equipement = db.query(models.Equipement).filter(models.Equipement.adresse_mac == equipement.adresse_mac).first()
 
-    if equipement:
+    if exist_equipement:
         raise HTTPException(status_code = 409, detail = "Conflit possible avec l'adresse mac.")
-    
+
     db_equipement = models.Equipement(**equipement.dict())
     db.add(db_equipement)
     db.commit()
