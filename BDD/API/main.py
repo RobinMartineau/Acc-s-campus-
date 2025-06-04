@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
-from routes import utilisateur, autorisation, badge, salle, classe, equipement, edt, pea, bae, pgs, psw, reservation
+from routes import utilisateur, autorisation, badge, edt, pea, bae, pgs, psw, reservation, equipement, salle
 import ipaddress
 
 app = FastAPI(
@@ -42,9 +42,9 @@ async def ip_filter_middleware(request: Request, call_next):
 
         # Définir les sous-réseaux autorisés
         allowed_networks = [
-	    ipaddress.ip_network('172.20.0.0/16'), #Baronnerie
+                ipaddress.ip_network('172.20.0.0/16'), #Baronnerie
             ipaddress.ip_network('192.168.4.0/22'), #VLAN 20
-            ipaddress.ip_network('192.168.30.2/32'), #PGS
+            ipaddress.ip_network('192.168.30.0/24'), #VLAN 30
             ipaddress.ip_network('127.0.0.1/32'), #Localhost
         ]
 
@@ -61,15 +61,14 @@ async def ip_filter_middleware(request: Request, call_next):
 app.include_router(utilisateur.router)
 app.include_router(autorisation.router)
 app.include_router(badge.router)
-app.include_router(salle.router)
-app.include_router(classe.router)
-app.include_router(equipement.router)
 app.include_router(edt.router)
 app.include_router(pea.router)
 app.include_router(bae.router)
 app.include_router(pgs.router)
 app.include_router(psw.router)
 app.include_router(reservation.router)
+app.include_router(equipement.router)
+app.include_router(salle.router)
 
 #Autorisation
 app.add_middleware(
