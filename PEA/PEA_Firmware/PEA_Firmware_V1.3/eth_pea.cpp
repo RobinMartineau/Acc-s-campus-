@@ -97,7 +97,7 @@ void setupEthernet() {
   Serial.print("DNS : ");
   Serial.println(dns);
   
-  Serial.print("MAC :");
+  Serial.print("MAC : ");
    for (byte i = 0; i < 6; ++i) {
     if (mac[i] < 0x10) Serial.print('0');  // 0-padding (0A→0A, 03→03)
     Serial.print(mac[i], HEX);             // impression en héx. majuscules
