@@ -95,17 +95,35 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormAfficherSalles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAfficherSalles.Designer.cs">
+      <DependentUpon>FormAfficherSalles.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormAfficherUtilisateurs.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormAfficherUtilisateurs.Designer.cs">
       <DependentUpon>FormAfficherUtilisateurs.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormAjouterModifierSalle.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAjouterModifierSalle.Designer.cs">
+      <DependentUpon>FormAjouterModifierSalle.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormAssocierBadge.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormAssocierBadge.Designer.cs">
       <DependentUpon>FormAssocierBadge.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormGestionSalles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormGestionSalles.Designer.cs">
+      <DependentUpon>FormGestionSalles.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmListeUtilisateurs.cs">
       <SubType>Form</SubType>
@@ -127,11 +145,20 @@
     <Compile Include="Views\FrmGestionBadgesSalles.Designer.cs">
       <DependentUpon>FrmGestionBadgesSalles.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="FormAfficherSalles.resx">
+      <DependentUpon>FormAfficherSalles.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormAfficherUtilisateurs.resx">
       <DependentUpon>FormAfficherUtilisateurs.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormAjouterModifierSalle.resx">
+      <DependentUpon>FormAjouterModifierSalle.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormAssocierBadge.resx">
       <DependentUpon>FormAssocierBadge.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormGestionSalles.resx">
+      <DependentUpon>FormGestionSalles.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmListeUtilisateurs.resx">
       <DependentUpon>FrmListeUtilisateurs.cs</DependentUpon>
