@@ -408,7 +408,7 @@ int httpGetIDSalle(const String& numSalle)
 {
   // Vérifie d'abord si un ID est déjà stocké
   int idStocke = -1;
-  EEPROM.get(EEPROM_ADDR_ID_SALLE, idStocke);
+  idStocke = (EEPROM.read(EEPROM_ADDR_ID_SALLE) << 8) | EEPROM.read(EEPROM_ADDR_ID_SALLE + 1);
   if (idStocke > 0 && idStocke < 10000) { // suppose qu'un ID valide est positif et <10000
     Serial.print("ID salle trouvé en mémoire : ");
     Serial.println(idStocke);
@@ -422,7 +422,7 @@ int httpGetIDSalle(const String& numSalle)
   delay(50);
 
   Serial.println("Connexion au serveur…");
-  if (client.connect(serverHost, serverPort)) {
+  if (client.connect(serverHost, SERVER_PORT)) {
     client.print(F("GET /salle/"));
     client.print(numSalle);
     client.println(F(" HTTP/1.1"));
@@ -463,7 +463,8 @@ int httpGetIDSalle(const String& numSalle)
       serverResponse.trim();
       idSalle = serverResponse.toInt();
       Serial.print("ID salle reçu : "); Serial.println(idSalle);
-      EEPROM.put(EEPROM_ADDR_ID_SALLE, idSalle);  // Sauvegarde ID salle
+      EEPROM.write(EEPROM_ADDR_ID_SALLE,     (idSalle >> 8) & 0xFF);
+      EEPROM.write(EEPROM_ADDR_ID_SALLE + 1,  idSalle       & 0xFF);  // Sauvegarde ID salle
     } else if (httpCode == 404) {
       Serial.println("Erreur 404 : Salle non trouvée");
     } else if (httpCode == 422) {
@@ -559,7 +560,7 @@ void addEquipement(int idSalle)
   Serial.print("Connexion au serveur pour suppression de l'équipement ID : ");
   Serial.println(idEquipement);
 
-  if (client.connect(serverHost, serverPort)) {
+  if (client.connect(serverHost, SERVER_PORT)) {
     client.print("DELETE /equipement/");
     client.print(idEquipement);
     client.println(" HTTP/1.1");
@@ -577,8 +578,8 @@ void addEquipement(int idSalle)
     client.stop();
 
     // Efface l'ID de la mémoire EEPROM
-    int efface = -1;
-    EEPROM.put(EEPROM_ADDR_ID_SALLE, efface);
+    EEPROM.write(EEPROM_ADDR_ID_SALLE,     0xFF); // -1 = 0xFFFF
+    EEPROM.write(EEPROM_ADDR_ID_SALLE + 1, 0xFF);
     Serial.println("ID de salle supprimé de la mémoire interne.");
   } else {
     Serial.println("Échec de connexion pour suppression d'équipement");

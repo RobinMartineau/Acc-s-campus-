@@ -12,6 +12,7 @@
 #include "Adafruit_ILI9341.h"
 #include "Adafruit_GFX.h"
 #include <ArduinoJson.h>
+#include <EEPROM.h>
 //#include <Fonts/FreeMonoBoldOblique18pt7b.h>
 
 //Déclaration des variables

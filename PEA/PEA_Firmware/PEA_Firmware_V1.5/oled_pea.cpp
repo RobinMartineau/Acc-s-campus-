@@ -1,5 +1,6 @@
 #include "pea.h"
 
+
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC,TFT_RST);
 
 unsigned long ILIInit(){
@@ -15,7 +16,8 @@ unsigned long ILIInit(){
   tft.setTextColor(ILI9341_BLACK); 
   tft.setTextSize(4);
   tft.println("Screen OK !");
-
+  //tft.drawRGBBitmap(0, 0, image_data_Logo_SaintAubin_ILI9341, 320, 240);
+  //delay(3000);
   digitalWrite(TFT_CS, HIGH); /*On choisit TFT*/
   delay(50);
 }
